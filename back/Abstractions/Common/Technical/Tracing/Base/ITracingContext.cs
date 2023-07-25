@@ -1,4 +1,4 @@
-﻿namespace Example.Api.Abstractions.Common.Technical.Tracing.Base;
+﻿namespace MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing.Base;
 
 /// <summary>
 ///     Empty Interface to facilitate DI integration

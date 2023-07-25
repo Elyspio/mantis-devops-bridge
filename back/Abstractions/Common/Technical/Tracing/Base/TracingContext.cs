@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 
-namespace Example.Api.Abstractions.Common.Technical.Tracing.Base;
+namespace MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing.Base;
 
 /// <summary>
 ///     Tracing context for Services and Adapters

@@ -1,8 +1,8 @@
-﻿using Example.Api.Abstractions.Exceptions;
+﻿using MantisDevopsBridge.Api.Abstractions.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Example.Api.Web.Technical.Filters;
+namespace MantisDevopsBridge.Api.Web.Technical.Filters;
 
 /// <inheritdoc />
 /// , Intercepts

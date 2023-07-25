@@ -1,4 +1,4 @@
-﻿namespace Example.Api.Abstractions.Common.Assemblers;
+﻿namespace MantisDevopsBridge.Api.Abstractions.Common.Assemblers;
 
 /// <summary>
 ///     Convert an object of <typeparamref name="Ta" /> to a <typeparamref name="Tb" />  and inversely

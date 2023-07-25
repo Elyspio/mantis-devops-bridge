@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32120.378
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example.Api.Abstractions", "Abstractions\Example.Api.Abstractions.csproj", "{04D70810-6D52-4BCA-94E0-E5138C3923BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MantisDevopsBridge.Api.Abstractions", "Abstractions\MantisDevopsBridge.Api.Abstractions.csproj", "{04D70810-6D52-4BCA-94E0-E5138C3923BE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example.Api.Adapters.Rest", "Adapters\Example.Api.Adapters.Rest.csproj", "{FB92BB0B-2A3F-4A6D-8547-7993BF9DA5D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MantisDevopsBridge.Api.Adapters.Rest", "Adapters\MantisDevopsBridge.Api.Adapters.Rest.csproj", "{FB92BB0B-2A3F-4A6D-8547-7993BF9DA5D2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example.Api.Core", "Core\Example.Api.Core.csproj", "{388A04AE-1081-445B-8DDC-B837AA5D0F3D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MantisDevopsBridge.Api.Core", "Core\MantisDevopsBridge.Api.Core.csproj", "{388A04AE-1081-445B-8DDC-B837AA5D0F3D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example.Api.Adapters.Mongo", "Db\Example.Api.Adapters.Mongo.csproj", "{658D04DC-7D4E-46E2-9F49-4000CFD77C79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MantisDevopsBridge.Api.Adapters.Mongo", "Db\MantisDevopsBridge.Api.Adapters.Mongo.csproj", "{658D04DC-7D4E-46E2-9F49-4000CFD77C79}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example.Api.Web", "Web\Example.Api.Web.csproj", "{0FF2058F-F09A-41DE-A77C-EAB037F2742D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MantisDevopsBridge.Api.Web", "Web\MantisDevopsBridge.Api.Web.csproj", "{0FF2058F-F09A-41DE-A77C-EAB037F2742D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapters", "Adapters", "{3B1E2027-625B-44A2-ACA5-535E10E19F22}"
 EndProject

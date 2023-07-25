@@ -30,10 +30,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Abstractions\Example.Api.Abstractions.csproj" />
-        <ProjectReference Include="..\Adapters\Example.Api.Adapters.Rest.csproj" />
-        <ProjectReference Include="..\Core\Example.Api.Core.csproj" />
-        <ProjectReference Include="..\Db\Example.Api.Adapters.Mongo.csproj" />
+        <ProjectReference Include="..\Abstractions\MantisDevopsBridge.Api.Abstractions.csproj" />
+        <ProjectReference Include="..\Adapters\MantisDevopsBridge.Api.Adapters.Rest.csproj" />
+        <ProjectReference Include="..\Core\MantisDevopsBridge.Api.Core.csproj" />
+        <ProjectReference Include="..\Db\MantisDevopsBridge.Api.Adapters.Mongo.csproj" />
     </ItemGroup>
 
 

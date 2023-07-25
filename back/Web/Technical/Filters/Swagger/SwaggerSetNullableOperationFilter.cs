@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
-using Example.Api.Web.Technical.Helpers;
+using MantisDevopsBridge.Api.Web.Technical.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Example.Api.Web.Technical.Filters.Swagger;
+namespace MantisDevopsBridge.Api.Web.Technical.Filters.Swagger;
 
 /// <summary>
 ///     Permet que les paramètres des endpoints dans le swagger soient affichés en tant que required ssi ils ne sont pas

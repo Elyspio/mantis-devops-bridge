@@ -1,6 +1,6 @@
-﻿using Example.Api.Abstractions.Common.Helpers;
-using Example.Api.Abstractions.Interfaces.Business;
-using Example.Api.Abstractions.Interfaces.Repositories;
+﻿using MantisDevopsBridge.Api.Abstractions.Common.Helpers;
+using MantisDevopsBridge.Api.Abstractions.Interfaces.Business;
+using MantisDevopsBridge.Api.Abstractions.Interfaces.Repositories;
 using Mapster;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;

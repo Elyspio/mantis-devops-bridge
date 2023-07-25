@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Example.Api.Abstractions.Common.Helpers;
-using Example.Api.Abstractions.Common.Technical.Tracing.Base;
+using MantisDevopsBridge.Api.Abstractions.Common.Helpers;
+using MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing.Base;
 using Microsoft.Extensions.Logging;
 
-namespace Example.Api.Abstractions.Common.Technical.Tracing;
+namespace MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing;
 
 /// <inheritdoc cref="Attribute" />
 /// with tracing context

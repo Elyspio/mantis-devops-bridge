@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 
-namespace Example.Api.Abstractions.Common.Helpers;
+namespace MantisDevopsBridge.Api.Abstractions.Common.Helpers;
 
 /// <summary>
 ///     Provides utility methods for logging.

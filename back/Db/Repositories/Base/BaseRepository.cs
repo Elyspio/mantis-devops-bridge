@@ -1,4 +1,4 @@
-﻿using Example.Api.Abstractions.Common.Technical.Tracing;
+﻿using MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing;
 using Example.Api.Adapters.Mongo.Technical;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;

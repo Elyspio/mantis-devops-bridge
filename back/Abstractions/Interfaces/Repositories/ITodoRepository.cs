@@ -1,7 +1,7 @@
-﻿using Example.Api.Abstractions.Models.Base;
-using Example.Api.Abstractions.Models.Entities;
+﻿using MantisDevopsBridge.Api.Abstractions.Models.Base;
+using MantisDevopsBridge.Api.Abstractions.Models.Entities;
 
-namespace Example.Api.Abstractions.Interfaces.Repositories;
+namespace MantisDevopsBridge.Api.Abstractions.Interfaces.Repositories;
 
 public interface ITodoRepository : ICrudRepository<TodoEntity, TodoBase>
 {

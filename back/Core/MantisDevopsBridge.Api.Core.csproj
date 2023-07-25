@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Abstractions\Example.Api.Abstractions.csproj"/>
-    <ProjectReference Include="..\Adapters\Example.Api.Adapters.Rest.csproj"/>
+    <ProjectReference Include="..\Abstractions\MantisDevopsBridge.Api.Abstractions.csproj" />
+    <ProjectReference Include="..\Adapters\MantisDevopsBridge.Api.Adapters.Rest.csproj" />
   </ItemGroup>
 
   <ItemGroup>

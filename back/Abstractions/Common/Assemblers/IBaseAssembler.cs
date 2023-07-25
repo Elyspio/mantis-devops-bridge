@@ -1,4 +1,4 @@
-﻿namespace Example.Api.Abstractions.Common.Assemblers;
+﻿namespace MantisDevopsBridge.Api.Abstractions.Common.Assemblers;
 
 /// <summary>
 ///     Assembling interface

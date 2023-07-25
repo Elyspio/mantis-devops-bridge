@@ -1,6 +1,6 @@
-﻿using Example.Api.Web.Technical.Filters.Swagger;
+﻿using MantisDevopsBridge.Api.Web.Technical.Filters.Swagger;
 
-namespace Example.Api.Web.Technical.Extensions;
+namespace MantisDevopsBridge.Api.Web.Technical.Extensions;
 
 /// <summary>
 ///     Swagger Extensions methods for <see cref="IServiceCollection" />

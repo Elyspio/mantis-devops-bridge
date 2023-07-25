@@ -1,6 +1,6 @@
-﻿using Example.Api.Abstractions.Interfaces.Injections;
-using Example.Api.Adapters.Rest.AuthenticationApi;
+﻿using MantisDevopsBridge.Api.Abstractions.Interfaces.Injections;
 using Example.Api.Adapters.Rest.Configs;
+using MantisDevopsBridge.Api.Abstractions.Common.Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,9 +10,8 @@ public class RestAdapterModule : IDotnetModule
 {
 	public void Load(IServiceCollection services, IConfiguration configuration)
 	{
-		var conf = new EndpointConfig();
-		configuration.GetSection(EndpointConfig.Section).Bind(conf);
+		var config = configuration.GetRequiredSection(EndpointConfig.Section).Get<EndpointConfig>()!;
 
-		services.AddHttpClient<IJwtClient, JwtClient>(client => { client.BaseAddress = new Uri(conf.Authentication); });
+		Console.WriteLine(Log.F(config));
 	}
 }

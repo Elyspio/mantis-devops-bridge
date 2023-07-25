@@ -1,9 +1,9 @@
-﻿using Example.Api.Abstractions.Common.Assemblers;
-using Example.Api.Abstractions.Common.Extensions;
-using Example.Api.Abstractions.Models.Entities;
-using Example.Api.Abstractions.Models.Transports;
+﻿using MantisDevopsBridge.Api.Abstractions.Common.Assemblers;
+using MantisDevopsBridge.Api.Abstractions.Common.Extensions;
+using MantisDevopsBridge.Api.Abstractions.Models.Entities;
+using MantisDevopsBridge.Api.Abstractions.Models.Transports;
 
-namespace Example.Api.Core.Assemblers;
+namespace MantisDevopsBridge.Api.Core.Assemblers;
 
 public class TodoAssembler : BaseAssembler<Todo, TodoEntity>
 {

@@ -1,14 +1,14 @@
-﻿using Example.Api.Abstractions.Common.Assemblers;
-using Example.Api.Abstractions.Common.Extensions;
-using Example.Api.Abstractions.Common.Helpers;
-using Example.Api.Abstractions.Common.Technical.Tracing;
-using Example.Api.Abstractions.Exceptions;
-using Example.Api.Abstractions.Interfaces.Business;
-using Example.Api.Abstractions.Interfaces.Repositories;
-using Example.Api.Abstractions.Interfaces.Services.Base;
+﻿using MantisDevopsBridge.Api.Abstractions.Common.Assemblers;
+using MantisDevopsBridge.Api.Abstractions.Common.Extensions;
+using MantisDevopsBridge.Api.Abstractions.Common.Helpers;
+using MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing;
+using MantisDevopsBridge.Api.Abstractions.Exceptions;
+using MantisDevopsBridge.Api.Abstractions.Interfaces.Business;
+using MantisDevopsBridge.Api.Abstractions.Interfaces.Repositories;
+using MantisDevopsBridge.Api.Abstractions.Interfaces.Services.Base;
 using Microsoft.Extensions.Logging;
 
-namespace Example.Api.Core.Services.Base;
+namespace MantisDevopsBridge.Api.Core.Services.Base;
 
 internal abstract class CrudService<TData, TBase, TEntity>(ILogger logger, ICrudRepository<TEntity, TBase> repository, IBaseAssembler<TData, TEntity> baseAssembler)
 	: TracingService(logger), ICrudService<TData, TBase>

@@ -1,11 +1,11 @@
-﻿using Example.Api.Abstractions.Common.Technical.Tracing.Base;
-using Example.Api.Web.Technical.Helpers;
+﻿using MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing.Base;
+using MantisDevopsBridge.Api.Web.Technical.Helpers;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
-namespace Example.Api.Web.Technical.Extensions;
+namespace MantisDevopsBridge.Api.Web.Technical.Extensions;
 
 /// <summary>
 ///     OpenTelemetry Extensions methods for <see cref="IServiceCollection" />

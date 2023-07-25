@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Serialization;
 
-namespace Example.Api.Web.Technical.Helpers;
+namespace MantisDevopsBridge.Api.Web.Technical.Helpers;
 
 /// <summary>
 /// </summary>

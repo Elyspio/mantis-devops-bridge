@@ -1,7 +1,7 @@
 ﻿using System.Net;
-using Example.Api.Abstractions.Common.Helpers;
+using MantisDevopsBridge.Api.Abstractions.Common.Helpers;
 
-namespace Example.Api.Abstractions.Exceptions;
+namespace MantisDevopsBridge.Api.Abstractions.Exceptions;
 
 /// <summary>
 ///     Defines a specialized exception type for HTTP errors.

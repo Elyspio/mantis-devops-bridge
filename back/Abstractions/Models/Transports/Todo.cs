@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Example.Api.Abstractions.Interfaces.Business;
-using Example.Api.Abstractions.Models.Base;
+using MantisDevopsBridge.Api.Abstractions.Interfaces.Business;
+using MantisDevopsBridge.Api.Abstractions.Models.Base;
 
-namespace Example.Api.Abstractions.Models.Transports;
+namespace MantisDevopsBridge.Api.Abstractions.Models.Transports;
 
 public class Todo : TodoBase, ITransport
 {

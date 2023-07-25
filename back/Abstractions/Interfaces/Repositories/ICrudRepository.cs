@@ -1,7 +1,7 @@
-﻿using Example.Api.Abstractions.Interfaces.Business;
+﻿using MantisDevopsBridge.Api.Abstractions.Interfaces.Business;
 using MongoDB.Bson;
 
-namespace Example.Api.Abstractions.Interfaces.Repositories;
+namespace MantisDevopsBridge.Api.Abstractions.Interfaces.Repositories;
 
 /// <summary>
 ///     Defines a generic CRUD repository for entities that implement IEntity interface.

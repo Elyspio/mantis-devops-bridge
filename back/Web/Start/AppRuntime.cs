@@ -1,6 +1,6 @@
-﻿using Example.Api.Web.Technical.Extensions;
+﻿using MantisDevopsBridge.Api.Web.Technical.Extensions;
 
-namespace Example.Api.Web.Start;
+namespace MantisDevopsBridge.Api.Web.Start;
 
 /// <summary>
 ///     Application Initializer

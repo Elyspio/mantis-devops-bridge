@@ -1,4 +1,4 @@
-﻿using Example.Api.Abstractions.Interfaces.Injections;
+﻿using MantisDevopsBridge.Api.Abstractions.Interfaces.Injections;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
