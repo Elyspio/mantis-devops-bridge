@@ -13,7 +13,7 @@ public sealed class ControllerDocumentationConvention : IControllerModelConventi
 		foreach (var attribute in controller.Attributes)
 			if (attribute.GetType() == typeof(RouteAttribute))
 			{
-				var routeAttribute = (RouteAttribute) attribute;
+				var routeAttribute = (RouteAttribute)attribute;
 				if (!string.IsNullOrWhiteSpace(routeAttribute.Name)) controller.ControllerName = routeAttribute.Name;
 			}
 	}

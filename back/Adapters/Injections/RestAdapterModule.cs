@@ -1,6 +1,5 @@
-﻿using MantisDevopsBridge.Api.Abstractions.Interfaces.Injections;
-using Example.Api.Adapters.Rest.Configs;
-using MantisDevopsBridge.Api.Abstractions.Common.Helpers;
+﻿using Example.Api.Adapters.Rest.Configs;
+using MantisDevopsBridge.Api.Abstractions.Interfaces.Injections;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +11,24 @@ public class RestAdapterModule : IDotnetModule
 	{
 		var config = configuration.GetRequiredSection(EndpointConfig.Section).Get<EndpointConfig>()!;
 
-		Console.WriteLine(Log.F(config));
+
+		services.AddSingleton(config);
+
+		var nsp = typeof(RestAdapterModule).Namespace!;
+		var baseNamespace = nsp[..nsp.LastIndexOf(".", StringComparison.Ordinal)];
+
+		services.Scan(scan => scan
+			.FromAssemblyOf<RestAdapterModule>()
+			.AddClasses(classes => classes.InNamespaces(baseNamespace + ".Clients"))
+			.AsImplementedInterfaces()
+			.WithSingletonLifetime()
+		);
+
+		services.Scan(scan => scan
+			.FromAssemblyOf<RestAdapterModule>()
+			.AddClasses(classes => classes.InNamespaces(baseNamespace + ".Assemblers"))
+			.AsSelf()
+			.WithSingletonLifetime()
+		);
 	}
 }

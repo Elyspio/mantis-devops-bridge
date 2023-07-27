@@ -1,6 +1,6 @@
-﻿using MantisDevopsBridge.Api.Abstractions.Interfaces.Injections;
-using Example.Api.Adapters.Mongo.Injections;
+﻿using Example.Api.Adapters.Mongo.Injections;
 using Example.Api.Adapters.Rest.Injections;
+using MantisDevopsBridge.Api.Abstractions.Interfaces.Injections;
 using MantisDevopsBridge.Api.Core.Injections;
 using MantisDevopsBridge.Api.Web.Technical.Extensions;
 
@@ -19,10 +19,7 @@ public sealed class AppBuilder
 	{
 		var builder = WebApplication.CreateBuilder(args);
 
-		if(builder.Environment.IsDevelopment())
-		{
-			builder.Configuration.AddJsonFile("appsettings.local.json", true);
-		}
+		if (builder.Environment.IsDevelopment()) builder.Configuration.AddJsonFile("appsettings.local.json", true);
 		builder.Configuration.AddJsonFile("appsettings.docker.json", true, true);
 
 		builder.Services.AddModule<CoreModule>(builder.Configuration);

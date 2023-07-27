@@ -1,5 +1,5 @@
-﻿using MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing;
-using Example.Api.Adapters.Mongo.Technical;
+﻿using Example.Api.Adapters.Mongo.Technical;
+using MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;

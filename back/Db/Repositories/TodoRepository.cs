@@ -1,9 +1,9 @@
-﻿using MantisDevopsBridge.Api.Abstractions.Common.Extensions;
+﻿using Example.Api.Adapters.Mongo.Repositories.Base;
+using MantisDevopsBridge.Api.Abstractions.Common.Extensions;
 using MantisDevopsBridge.Api.Abstractions.Common.Helpers;
 using MantisDevopsBridge.Api.Abstractions.Interfaces.Repositories;
 using MantisDevopsBridge.Api.Abstractions.Models.Base;
 using MantisDevopsBridge.Api.Abstractions.Models.Entities;
-using Example.Api.Adapters.Mongo.Repositories.Base;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;

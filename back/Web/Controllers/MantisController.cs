@@ -1,7 +1,6 @@
-﻿using MantisDevopsBridge.Api.Abstractions.Common.Helpers;
-using MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing;
+﻿using MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing;
 using MantisDevopsBridge.Api.Abstractions.Interfaces.Services;
-using MantisDevopsBridge.Api.Abstractions.Models.Transports;
+using MantisDevopsBridge.Api.Abstractions.Models.Base.Mantis.Tickets;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MantisDevopsBridge.Api.Web.Controllers;
@@ -11,7 +10,7 @@ namespace MantisDevopsBridge.Api.Web.Controllers;
 public class MantisController(IMantisService mantisService, ILogger<MantisController> logger) : TracingController(logger)
 {
 	[HttpGet]
-	[ProducesResponseType(typeof(List<Todo>), StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(List<Ticket>), StatusCodes.Status200OK)]
 	public async Task<IActionResult> GetAll()
 	{
 		using var _ = LogController();

@@ -1,10 +1,8 @@
-﻿using MantisDevopsBridge.Api.Abstractions.Models.Transports;
+﻿using MantisDevopsBridge.Api.Abstractions.Models.Base.Mantis.Tickets;
 
 namespace MantisDevopsBridge.Api.Abstractions.Interfaces.Services;
 
 public interface IMantisService
 {
-
-	Task<List<Todo>> GetAll();
-	
+	Task<List<Ticket>> GetAll();
 }

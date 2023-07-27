@@ -2,6 +2,6 @@
 
 public class EndpointElement
 {
-	public required string  Token { get; set; }
-	public required string  Host { get; set; }
+	public required string Token { get; set; }
+	public required string Host { get; set; }
 }
