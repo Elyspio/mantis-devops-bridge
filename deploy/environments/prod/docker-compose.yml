@@ -1,10 +1,9 @@
 version: "3"
 services:
-    react-api-template:
-        container_name: "react-api-template"
-        image: elyspio/react-api-template
+    coexya-mantis-devops-bridge:
+        container_name: "coexya-mantis-devops-bridge"
+        image: elyspio/mantis-devops-bridge
         volumes:
-            - "./config/front/conf.js:/back/wwwroot/conf.js"
             - "./config/back/appsettings.docker.json:/back/appsettings.docker.json"
         networks:
             - external
@@ -12,11 +11,11 @@ services:
         labels:
             - "traefik.enable=true"
             - "traefik.docker.network=external"
-            - "traefik.http.middlewares.react-api-template-prefix.stripprefix.prefixes=/react-api-template"
-            - "traefik.http.routers.react-api-template.middlewares=react-api-template-prefix@docker"
-            - "traefik.http.routers.react-api-template.rule=PathPrefix(`/react-api-template`)"
-            - "traefik.http.services.react-api-template.loadbalancer.server.port=4000"
-            - "traefik.http.routers.react-api-template.entrypoints=external"
+            - "traefik.http.middlewares.coexya-mantis-devops-bridge-prefix.stripprefix.prefixes=/coexya-mantis-devops-bridge"
+            - "traefik.http.routers.coexya-mantis-devops-bridge.middlewares=coexya-mantis-devops-bridge-prefix@docker"
+            - "traefik.http.routers.coexya-mantis-devops-bridge.rule=PathPrefix(`/coexya-mantis-devops-bridge`)"
+            - "traefik.http.services.coexya-mantis-devops-bridge.loadbalancer.server.port=4000"
+            - "traefik.http.routers.coexya-mantis-devops-bridge.entrypoints=external"
 
 
 

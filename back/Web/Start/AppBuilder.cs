@@ -19,15 +19,15 @@ public sealed class AppBuilder
 	{
 		var builder = WebApplication.CreateBuilder(args);
 
-		if (builder.Environment.IsDevelopment()) builder.Configuration.AddJsonFile("appsettings.local.json", true);
+		if (builder.Environment.IsDevelopment()) builder.Configuration.AddJsonFile("appsettings.secrets.json", true, true);
 		builder.Configuration.AddJsonFile("appsettings.docker.json", true, true);
 
 		builder.Services.AddModule<CoreModule>(builder.Configuration);
-
-
 		builder.Services.AddModule<MongoAdapterModule>(builder.Configuration);
 		builder.Services.AddModule<RestAdapterModule>(builder.Configuration);
 
+		
+		
 
 		builder.Host.AddLogging();
 

@@ -15,7 +15,7 @@ public class TicketAssembler(ILogger<TicketAssembler> logger)
 
 		return new Ticket
 		{
-			Id = issue.Id,
+			IdMantis = issue.Id,
 			Summary = issue.Summary,
 			App = new App
 			{

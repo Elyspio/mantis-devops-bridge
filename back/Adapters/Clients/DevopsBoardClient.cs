@@ -1,9 +1,11 @@
 ﻿using System.Collections.Concurrent;
 using Example.Api.Adapters.Rest.Assemblers;
+using MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing;
 using MantisDevopsBridge.Api.Abstractions.Configs;
 using MantisDevopsBridge.Api.Abstractions.Interfaces.Clients;
 using MantisDevopsBridge.Api.Abstractions.Models.Base.Issues.Enums;
 using MantisDevopsBridge.Api.Abstractions.Models.Transports.Devops.WorkItems;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
@@ -15,15 +17,17 @@ using WorkItem = MantisDevopsBridge.Api.Abstractions.Models.Transports.Devops.Wo
 
 namespace Example.Api.Adapters.Rest.Clients;
 
-public class DevopsBoardClient(IOptionsMonitor<DevopsConfig> configMonitor, WorkItemAssembler workItemAssembler) : IDevopsBoardClient
+public class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOptionsMonitor<DevopsConfig> configMonitor, WorkItemAssembler workItemAssembler) : TracingAdapter(logger),
+	IDevopsBoardClient
 {
 	private DevopsConfig config => configMonitor.CurrentValue;
 	private EndpointElement endpoint => config.Endpoint;
 
 	public async Task<Dictionary<AppName, List<WorkItem>>> GetWorkItems()
 	{
-		var workItems = new ConcurrentBag<Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem>();
+		using var _ = LogAdapter();
 
+		var workItems = new ConcurrentBag<Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem>();
 
 		var witClient = GetWorkItemClient();
 
@@ -57,6 +61,8 @@ public class DevopsBoardClient(IOptionsMonitor<DevopsConfig> configMonitor, Work
 
 	public async Task<WorkItem> CreateWorkItem(CreateWorkItemPayload workItem)
 	{
+		using var _ = LogAdapter();
+
 		var client = GetWorkItemClient();
 
 		var patchDocument = new JsonPatchDocument
@@ -67,7 +73,10 @@ public class DevopsBoardClient(IOptionsMonitor<DevopsConfig> configMonitor, Work
 			AddField(WorkItemAssembler.CommentairesFieldId, workItem.Comments),
 			AddField(WorkItemAssembler.TagsFieldId, workItemAssembler.ConvertPlatform(workItem.App.Platform)),
 			AddField(WorkItemAssembler.SeverityFieldId, workItemAssembler.ConvertSeverity(workItem.Severity)),
-			AddField(WorkItemAssembler.PriorityFieldId, workItemAssembler.ConvertPriority(workItem.Priority))
+			AddField(WorkItemAssembler.PriorityFieldId, workItemAssembler.ConvertPriority(workItem.Priority)),
+			AddField(WorkItemAssembler.MantisIdField, workItem.IdMantis),
+			AddField(WorkItemAssembler.MantisCreatedAtField, workItem.MantisCreatedAt),
+			AddField(WorkItemAssembler.MantisUpdatedAtField, workItem.MantisUpdatedAt)
 		};
 
 		// Create the work item
@@ -84,6 +93,28 @@ public class DevopsBoardClient(IOptionsMonitor<DevopsConfig> configMonitor, Work
 		return workItemAssembler.Convert(result);
 	}
 
+	public async Task<WorkItem> UpdateWorkItem(UpdateWorkItemPayload workItem)
+	{
+		using var _ = LogAdapter();
+
+		var client = GetWorkItemClient();
+
+		var patchDocument = new JsonPatchDocument
+		{
+			UpdateField(WorkItemAssembler.TitleFieldId, workItem.Summary),
+			UpdateField(WorkItemAssembler.DescriptionFieldId, workItem.Description),
+			UpdateField(WorkItemAssembler.CommentairesFieldId, workItem.Comments),
+			UpdateField(WorkItemAssembler.SeverityFieldId, workItemAssembler.ConvertSeverity(workItem.Severity)),
+			UpdateField(WorkItemAssembler.PriorityFieldId, workItemAssembler.ConvertPriority(workItem.Priority)),
+			UpdateField(WorkItemAssembler.StatusFieldId, workItemAssembler.ConvertStatus(workItem.Status)),
+			UpdateField(WorkItemAssembler.MantisUpdatedAtField, workItem.MantisUpdatedAt)
+		};
+
+		var result = await client.UpdateWorkItemAsync(patchDocument, workItem.Id);
+
+		return workItemAssembler.Convert(result);
+	}
+
 
 	private WorkItemTrackingHttpClient GetWorkItemClient()
 	{
@@ -95,7 +126,7 @@ public class DevopsBoardClient(IOptionsMonitor<DevopsConfig> configMonitor, Work
 	}
 
 
-	private JsonPatchOperation AddField(string name, string value)
+	private JsonPatchOperation AddField(string name, object value)
 	{
 		return new JsonPatchOperation
 		{
@@ -105,7 +136,7 @@ public class DevopsBoardClient(IOptionsMonitor<DevopsConfig> configMonitor, Work
 		};
 	}
 
-	private JsonPatchOperation UpdateField(string name, string value)
+	private JsonPatchOperation UpdateField(string name, object value)
 	{
 		return new JsonPatchOperation
 		{

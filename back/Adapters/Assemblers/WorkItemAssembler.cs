@@ -17,6 +17,9 @@ public class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 	private const string CreatedAtFieldId = "System.CreatedDate";
 	private const string UpdatedAtFieldId = "System.ChangedDate";
 	public const string CommentairesFieldId = "Custom.Commentaires";
+	public const string MantisIdField = "Custom.IdMantis";
+	public const string MantisUpdatedAtField = "Custom.UpdatedAt";
+	public const string MantisCreatedAtField = "Custom.CreatedAt";
 
 
 	public WorkItem Convert(Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem item)
@@ -34,15 +37,15 @@ public class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 				Name = ParseName(fields),
 				Platform = ParsePlatform(fields)
 			},
-			Dates = new IssueDates
-			{
-				CreatedAt = (DateTime)fields[CreatedAtFieldId],
-				UpdatedAt = (DateTime)fields[UpdatedAtFieldId]
-			},
 			Severity = ParseSeverity(fields),
 			Priority = ParsePriority(fields),
 			Status = ParseStatus(fields),
-			Comments = (string)fields[CommentairesFieldId]
+			Comments = (string)fields[CommentairesFieldId],
+			IdMantis = System.Convert.ToInt32(fields[MantisIdField]),
+			MantisUpdatedAt = ParseDate(fields[MantisUpdatedAtField]),
+			MantisCreatedAt = ParseDate(fields[MantisCreatedAtField]),
+			CreatedAt = ParseDate(fields[CreatedAtFieldId]),
+			UpdatedAt = ParseDate(fields[UpdatedAtFieldId])
 		};
 	}
 
@@ -164,7 +167,7 @@ public class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 			TicketStatus.Feedback => "Commentaire",
 			TicketStatus.Acknowledged => "Accepté",
 			TicketStatus.Confirmed => "Confirmé",
-			TicketStatus.Assigned => "Assigné",
+			TicketStatus.Assigned => "Affecté",
 			TicketStatus.Resolved => "Résolu",
 			TicketStatus.Delivered => "Livré Coexya",
 			TicketStatus.DeliveredInQualif => "Livré Qualif",
@@ -173,5 +176,10 @@ public class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 			TicketStatus.Closed => "Fermé",
 			_ => throw new ArgumentOutOfRangeException(nameof(workItemStatus), workItemStatus, null)
 		};
+	}
+
+	private DateTime ParseDate(object date)
+	{
+		return ((DateTime)date).ToLocalTime();
 	}
 }

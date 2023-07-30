@@ -5,15 +5,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MantisDevopsBridge.Api.Web.Controllers;
 
-[Route("api/mantis")]
+[Route("api/synchro")]
 [ApiController]
-public class MantisController(IIssueService issueService, ILogger<MantisController> logger) : TracingController(logger)
+public class SynchroController(IIssueService issueService, ILogger<SynchroController> logger) : TracingController(logger)
 {
-	[HttpGet]
-	[ProducesResponseType(typeof(List<Ticket>), StatusCodes.Status200OK)]
-	public async Task<IActionResult> GetAll()
+	[HttpPost]
+	[ProducesResponseType(typeof(List<Ticket>), StatusCodes.Status204NoContent)]
+	public async Task<IActionResult> Synchronize()
 	{
 		using var _ = LogController();
-		return Ok(await issueService.GetAll());
+		await issueService.Synchronize();
+		return NoContent();
 	}
 }

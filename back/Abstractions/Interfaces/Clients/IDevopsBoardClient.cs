@@ -8,4 +8,5 @@ public interface IDevopsBoardClient
 	Task<Dictionary<AppName, List<WorkItem>>> GetWorkItems();
 
 	Task<WorkItem> CreateWorkItem(CreateWorkItemPayload workItem);
+	Task<WorkItem> UpdateWorkItem(UpdateWorkItemPayload workItem);
 }

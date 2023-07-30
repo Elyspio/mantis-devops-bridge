@@ -1,4 +1,5 @@
 ﻿using MantisDevopsBridge.Api.Abstractions.Interfaces.Injections;
+using MantisDevopsBridge.Api.Core.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,5 +17,7 @@ public class CoreModule : IDotnetModule
 			.AsImplementedInterfaces()
 			.WithSingletonLifetime()
 		);
+
+		services.AddHostedService<BridgeService>();
 	}
 }

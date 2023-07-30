@@ -133,7 +133,7 @@ public static class Log
 
 			if (!string.IsNullOrWhiteSpace(content)) sb.Append($" -- {content}");
 
-			sb.Append($" -- {Stopwatch.GetElapsedTime(_startedAt).TotalMilliseconds}ms");
+			sb.Append($" -- {Stopwatch.GetElapsedTime(_startedAt).TotalMilliseconds:F}ms");
 
 			_logger.Log(_level, sb.ToString());
 		}
