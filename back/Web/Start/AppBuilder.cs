@@ -26,8 +26,6 @@ public sealed class AppBuilder
 		builder.Services.AddModule<MongoAdapterModule>(builder.Configuration);
 		builder.Services.AddModule<RestAdapterModule>(builder.Configuration);
 
-		
-		
 
 		builder.Host.AddLogging();
 

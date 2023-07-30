@@ -87,7 +87,7 @@ public static class Log
 			_traceId = activity?.RootId ?? activity?.Id;
 			_className = className;
 
-			if (!string.IsNullOrWhiteSpace(_arguments)) _arguments = arguments;
+			if (!string.IsNullOrWhiteSpace(arguments)) _arguments = arguments;
 
 			Enter();
 		}

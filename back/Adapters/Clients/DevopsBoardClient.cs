@@ -107,7 +107,8 @@ public class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOptionsMonito
 			UpdateField(WorkItemAssembler.SeverityFieldId, workItemAssembler.ConvertSeverity(workItem.Severity)),
 			UpdateField(WorkItemAssembler.PriorityFieldId, workItemAssembler.ConvertPriority(workItem.Priority)),
 			UpdateField(WorkItemAssembler.StatusFieldId, workItemAssembler.ConvertStatus(workItem.Status)),
-			UpdateField(WorkItemAssembler.MantisUpdatedAtField, workItem.MantisUpdatedAt)
+			UpdateField(WorkItemAssembler.MantisUpdatedAtField, workItem.MantisUpdatedAt),
+			UpdateField(WorkItemAssembler.UpdatedAtFieldId, workItem.MantisUpdatedAt)
 		};
 
 		var result = await client.UpdateWorkItemAsync(patchDocument, workItem.Id);

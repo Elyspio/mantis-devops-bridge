@@ -10,7 +10,7 @@ namespace MantisDevopsBridge.Api.Web.Controllers;
 public class SynchroController(IIssueService issueService, ILogger<SynchroController> logger) : TracingController(logger)
 {
 	[HttpPost]
-	[ProducesResponseType(typeof(List<Ticket>), StatusCodes.Status204NoContent)]
+	[ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
 	public async Task<IActionResult> Synchronize()
 	{
 		using var _ = LogController();

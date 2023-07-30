@@ -115,4 +115,53 @@ public class TicketAssembler(ILogger<TicketAssembler> logger)
 
 		throw new ArgumentOutOfRangeException(nameof(category), $"La valeur {category} n'a pas pu être converti en {nameof(AppPlatform)}");
 	}
+
+
+	public string ConvertSeverity(TicketSeverity severity)
+	{
+		return severity switch
+		{
+			TicketSeverity.Unknown => "minor",
+			TicketSeverity.Feature => "fonctionnalité",
+			TicketSeverity.Minor => "minor",
+			TicketSeverity.Major => "major",
+			TicketSeverity.Block => "block",
+			_ => throw new ArgumentOutOfRangeException(nameof(severity), severity, null)
+		};
+	}
+
+	public string ConvertPriority(TicketPriority priority)
+	{
+		return priority switch
+		{
+			TicketPriority.Unknown => "none",
+			TicketPriority.None => "none",
+			TicketPriority.Low => "low",
+			TicketPriority.Normal => "normal",
+			TicketPriority.High => "high",
+			TicketPriority.Urgent => "urgente",
+			TicketPriority.Immediate => "immediate",
+			_ => throw new ArgumentOutOfRangeException(nameof(priority), priority, null)
+		};
+	}
+
+	public string ConvertStatus(TicketStatus status)
+	{
+		return status switch
+		{
+			TicketStatus.Created => "new",
+			TicketStatus.Feedback => "feedback",
+			TicketStatus.Acknowledged => "acknowledged",
+			TicketStatus.Confirmed => "confirmed",
+			TicketStatus.Assigned => "assigned",
+			TicketStatus.Resolved => "resolved",
+			TicketStatus.Delivered => "livre",
+			TicketStatus.DeliveredInQualif => "livrerecette",
+			TicketStatus.DeliveredInPreProd => "livrepreproduction",
+			TicketStatus.DeliveredProd => "livreproduction",
+			TicketStatus.Closed => "closed",
+			TicketStatus.Unknown => "new",
+			_ => throw new ArgumentOutOfRangeException(nameof(status), status, null)
+		};
+	}
 }

@@ -3,7 +3,7 @@ target "default" {
 	dockerfile = "./deploy/build/dockerfile"
 	platforms  = [
 		"linux/amd64",
-#		"linux/arm64"
+		#		"linux/arm64"
 	]
 	tags = [
 		"elyspio/mantis-devops-bridge:latest"

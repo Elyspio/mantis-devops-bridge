@@ -1,5 +1,4 @@
 ﻿using MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing;
-using MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing.Base;
 using MantisDevopsBridge.Api.Abstractions.Interfaces.Services;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -9,6 +8,16 @@ namespace MantisDevopsBridge.Api.Core.Services;
 public class BridgeService(ILogger<BridgeService> logger, IIssueService issueService) : TracingService(logger), IHostedService, IDisposable, IAsyncDisposable
 {
 	private Timer? _timer;
+
+	public async ValueTask DisposeAsync()
+	{
+		if (_timer != null) await _timer.DisposeAsync();
+	}
+
+	public void Dispose()
+	{
+		_timer?.Dispose();
+	}
 
 	public Task StartAsync(CancellationToken cancellationToken)
 	{
@@ -28,15 +37,5 @@ public class BridgeService(ILogger<BridgeService> logger, IIssueService issueSer
 	{
 		using var _ = LogService();
 		issueService.Synchronize().GetAwaiter().GetResult();
-	}
-
-	public void Dispose()
-	{
-		_timer?.Dispose();
-	}
-
-	public async ValueTask DisposeAsync()
-	{
-		if (_timer != null) await _timer.DisposeAsync();
 	}
 }

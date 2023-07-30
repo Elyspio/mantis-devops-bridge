@@ -15,7 +15,7 @@ public class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 	public const string DescriptionFieldId = "System.Description";
 	public const string TagsFieldId = "System.Tags";
 	private const string CreatedAtFieldId = "System.CreatedDate";
-	private const string UpdatedAtFieldId = "System.ChangedDate";
+	public const string UpdatedAtFieldId = "System.ChangedDate";
 	public const string CommentairesFieldId = "Custom.Commentaires";
 	public const string MantisIdField = "Custom.IdMantis";
 	public const string MantisUpdatedAtField = "Custom.UpdatedAt";
