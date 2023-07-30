@@ -1,4 +1,4 @@
-﻿using Example.Api.Adapters.Rest.Configs;
+﻿using MantisDevopsBridge.Api.Abstractions.Configs;
 using MantisDevopsBridge.Api.Abstractions.Interfaces.Injections;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,10 +9,8 @@ public class RestAdapterModule : IDotnetModule
 {
 	public void Load(IServiceCollection services, IConfiguration configuration)
 	{
-		var config = configuration.GetRequiredSection(EndpointConfig.Section).Get<EndpointConfig>()!;
-
-
-		services.AddSingleton(config);
+		services.Configure<MantisConfig>(config => configuration.GetSection(MantisConfig.Section).Bind(config));
+		services.Configure<DevopsConfig>(config => configuration.GetSection(DevopsConfig.Section).Bind(config));
 
 		var nsp = typeof(RestAdapterModule).Namespace!;
 		var baseNamespace = nsp[..nsp.LastIndexOf(".", StringComparison.Ordinal)];

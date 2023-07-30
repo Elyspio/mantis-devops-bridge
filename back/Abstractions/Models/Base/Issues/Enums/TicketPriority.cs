@@ -1,4 +1,4 @@
-﻿namespace MantisDevopsBridge.Api.Abstractions.Models.Base.Mantis.Tickets.Enums;
+﻿namespace MantisDevopsBridge.Api.Abstractions.Models.Base.Issues.Enums;
 
 public enum TicketPriority
 {

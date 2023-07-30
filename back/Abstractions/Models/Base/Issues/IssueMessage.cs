@@ -1,6 +1,6 @@
-﻿namespace MantisDevopsBridge.Api.Abstractions.Models.Base.Mantis.Tickets;
+﻿namespace MantisDevopsBridge.Api.Abstractions.Models.Base.Issues;
 
-public class TicketMessage
+public class IssueMessage
 {
 	public required int IdMessage { get; set; }
 	public required string Text { get; set; }

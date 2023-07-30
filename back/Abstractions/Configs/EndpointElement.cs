@@ -1,4 +1,4 @@
-﻿namespace Example.Api.Adapters.Rest.Configs;
+﻿namespace MantisDevopsBridge.Api.Abstractions.Configs;
 
 public class EndpointElement
 {

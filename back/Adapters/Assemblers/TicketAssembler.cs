@@ -1,7 +1,9 @@
 ﻿using Example.Api.Adapters.Rest.Responses.Mantis;
-using MantisDevopsBridge.Api.Abstractions.Models.Base.Mantis.Tickets;
-using MantisDevopsBridge.Api.Abstractions.Models.Base.Mantis.Tickets.Enums;
+using MantisDevopsBridge.Api.Abstractions.Models.Base.Issues;
+using MantisDevopsBridge.Api.Abstractions.Models.Base.Issues.Enums;
+using MantisDevopsBridge.Api.Abstractions.Models.Transports.Mantis.Tickets;
 using Microsoft.Extensions.Logging;
+using Issue = Example.Api.Adapters.Rest.Responses.Mantis.Issue;
 
 namespace Example.Api.Adapters.Rest.Assemblers;
 
@@ -13,16 +15,18 @@ public class TicketAssembler(ILogger<TicketAssembler> logger)
 
 		return new Ticket
 		{
-			App = new TicketApp
+			Id = issue.Id,
+			Summary = issue.Summary,
+			App = new App
 			{
 				Name = ParseName(issue.Category.Name),
 				Platform = ParsePlatform(issue.Category.Name),
-				Environment = fields.FirstOrDefault(f => f.Field.Name == "environment")?.Value ?? "N/A"
+				Environment = fields.FirstOrDefault(f => f.Field.Name == "environment")
+					              ?.Value ??
+				              "N/A"
 			},
-			IdIssue = issue.Id,
-			Summary = issue.Summary,
-			IsFeature = issue.CustomFields.FirstOrDefault(f => f.Field.Name == "Evolution")!.Value == "Oui",
-			Dates = new TicketDates
+			Description = issue.Description,
+			Dates = new IssueDates
 			{
 				CreatedAt = issue.CreatedAt,
 				UpdatedAt = issue.UpdatedAt
@@ -30,14 +34,16 @@ public class TicketAssembler(ILogger<TicketAssembler> logger)
 			Severity = ParseSeverity(issue.Severity),
 			Priority = ParsePriority(issue.Priority),
 			Status = ParseStatus(issue.Status),
-			Messages = issue.Notes?.Select(node => new TicketMessage
-			{
-				Reporter = node.Reporter.RealName,
-				Text = node.Text,
-				IdMessage = node.Id,
-				CreatedAt = node.CreatedAt,
-				Private = node.ViewState.Name == "private"
-			}).ToList() ?? new List<TicketMessage>()
+			Messages = issue.Notes?.Select(node => new IssueMessage
+				           {
+					           Reporter = node.Reporter.RealName,
+					           Text = node.Text,
+					           IdMessage = node.Id,
+					           CreatedAt = node.CreatedAt,
+					           Private = node.ViewState.Name == "private"
+				           })
+				           .ToList() ??
+			           new List<IssueMessage>()
 		};
 	}
 
@@ -67,10 +73,10 @@ public class TicketAssembler(ILogger<TicketAssembler> logger)
 			"confirmed" => TicketStatus.Confirmed,
 			"assigned" => TicketStatus.Assigned,
 			"resolved" => TicketStatus.Resolved,
-			"livre" => TicketStatus.Deployed,
-			"livrerecette" => TicketStatus.DeployedRecette,
-			"livrepreproduction" => TicketStatus.DeployedPreProd,
-			"livreproduction" => TicketStatus.DeployedProd,
+			"livre" => TicketStatus.Delivered,
+			"livrerecette" => TicketStatus.DeliveredInQualif,
+			"livrepreproduction" => TicketStatus.DeliveredInPreProd,
+			"livreproduction" => TicketStatus.DeliveredProd,
 			"closed" => TicketStatus.Closed,
 			_ => TicketStatus.Unknown
 		};

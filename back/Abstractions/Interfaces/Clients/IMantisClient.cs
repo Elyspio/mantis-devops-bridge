@@ -1,4 +1,4 @@
-﻿using MantisDevopsBridge.Api.Abstractions.Models.Base.Mantis.Tickets;
+﻿using MantisDevopsBridge.Api.Abstractions.Models.Transports.Mantis.Tickets;
 
 namespace MantisDevopsBridge.Api.Abstractions.Interfaces.Clients;
 
