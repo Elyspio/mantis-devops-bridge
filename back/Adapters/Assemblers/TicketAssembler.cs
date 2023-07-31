@@ -50,50 +50,17 @@ public class TicketAssembler(ILogger<TicketAssembler> logger)
 
 	private TicketPriority ParsePriority(Priority priority)
 	{
-		return priority.Name switch
-		{
-			"aucune" => TicketPriority.None,
-			"none" => TicketPriority.None,
-			"low" => TicketPriority.Low,
-			"normal" => TicketPriority.Normal,
-			"urgent" => TicketPriority.Urgent,
-			"high" => TicketPriority.High,
-			"immediate" => TicketPriority.Immediate,
-			_ => TicketPriority.Unknown
-		};
+		return (TicketPriority)priority.Id!.Value;
 	}
 
 	private TicketStatus ParseStatus(Status status)
 	{
-		return status.Name switch
-		{
-			"new" => TicketStatus.Created,
-			"feedback" => TicketStatus.Feedback,
-			"acknowledged" => TicketStatus.Acknowledged,
-			"confirmed" => TicketStatus.Confirmed,
-			"assigned" => TicketStatus.Assigned,
-			"resolved" => TicketStatus.Resolved,
-			"livre" => TicketStatus.Delivered,
-			"livrerecette" => TicketStatus.DeliveredInQualif,
-			"livrepreproduction" => TicketStatus.DeliveredInPreProd,
-			"livreproduction" => TicketStatus.DeliveredProd,
-			"closed" => TicketStatus.Closed,
-			_ => TicketStatus.Unknown
-		};
+		return (TicketStatus)status.Id!.Value;
 	}
 
 	private TicketSeverity ParseSeverity(Severity severity)
 	{
-		var content = severity.Name.ToLower();
-		if (content.Contains("bloquant")) return TicketSeverity.Block;
-		if (content.Contains("majeur")) return TicketSeverity.Major;
-		if (content.Contains("mineur")) return TicketSeverity.Minor;
-		if (content.Contains("fonctionnalité")) return TicketSeverity.Feature;
-
-
-		logger.LogWarning($"La valeur {severity.Name} n'a pas pu être converti en {nameof(TicketSeverity)}");
-
-		return TicketSeverity.Unknown;
+		return (TicketSeverity)severity.Id!.Value;
 	}
 
 	private AppName ParseName(string category)
@@ -114,54 +81,5 @@ public class TicketAssembler(ILogger<TicketAssembler> logger)
 		if (content.Contains("web")) return AppPlatform.Web;
 
 		throw new ArgumentOutOfRangeException(nameof(category), $"La valeur {category} n'a pas pu être converti en {nameof(AppPlatform)}");
-	}
-
-
-	public string ConvertSeverity(TicketSeverity severity)
-	{
-		return severity switch
-		{
-			TicketSeverity.Unknown => "minor",
-			TicketSeverity.Feature => "fonctionnalité",
-			TicketSeverity.Minor => "minor",
-			TicketSeverity.Major => "major",
-			TicketSeverity.Block => "block",
-			_ => throw new ArgumentOutOfRangeException(nameof(severity), severity, null)
-		};
-	}
-
-	public string ConvertPriority(TicketPriority priority)
-	{
-		return priority switch
-		{
-			TicketPriority.Unknown => "none",
-			TicketPriority.None => "none",
-			TicketPriority.Low => "low",
-			TicketPriority.Normal => "normal",
-			TicketPriority.High => "high",
-			TicketPriority.Urgent => "urgente",
-			TicketPriority.Immediate => "immediate",
-			_ => throw new ArgumentOutOfRangeException(nameof(priority), priority, null)
-		};
-	}
-
-	public string ConvertStatus(TicketStatus status)
-	{
-		return status switch
-		{
-			TicketStatus.Created => "new",
-			TicketStatus.Feedback => "feedback",
-			TicketStatus.Acknowledged => "acknowledged",
-			TicketStatus.Confirmed => "confirmed",
-			TicketStatus.Assigned => "assigned",
-			TicketStatus.Resolved => "resolved",
-			TicketStatus.Delivered => "livre",
-			TicketStatus.DeliveredInQualif => "livrerecette",
-			TicketStatus.DeliveredInPreProd => "livrepreproduction",
-			TicketStatus.DeliveredProd => "livreproduction",
-			TicketStatus.Closed => "closed",
-			TicketStatus.Unknown => "new",
-			_ => throw new ArgumentOutOfRangeException(nameof(status), status, null)
-		};
 	}
 }

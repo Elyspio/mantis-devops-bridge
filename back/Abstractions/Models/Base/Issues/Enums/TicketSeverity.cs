@@ -2,9 +2,8 @@
 
 public enum TicketSeverity
 {
-	Unknown,
-	Feature,
-	Minor,
-	Major,
-	Block
+	Feature = 0,
+	Minor = 50,
+	Major = 60,
+	Block = 80
 }

@@ -1,9 +1,12 @@
 ﻿using System.Collections.Concurrent;
 using Example.Api.Adapters.Rest.Assemblers;
+using Example.Api.Adapters.Rest.Responses.Mantis;
+using MantisDevopsBridge.Api.Abstractions.Common.Helpers;
 using MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing;
 using MantisDevopsBridge.Api.Abstractions.Configs;
 using MantisDevopsBridge.Api.Abstractions.Interfaces.Clients;
 using MantisDevopsBridge.Api.Abstractions.Models.Base.Issues.Enums;
+using MantisDevopsBridge.Api.Abstractions.Models.Transports.Devops.Payloads;
 using MantisDevopsBridge.Api.Abstractions.Models.Transports.Devops.WorkItems;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -31,9 +34,7 @@ public class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOptionsMonito
 
 		var witClient = GetWorkItemClient();
 
-		// var appNames = Enum.GetValues<AppName>();
-		var appNames = new[] { AppName.Azurezo };
-
+		var appNames = Enum.GetValues<AppName>();
 
 		foreach (var appName in appNames)
 		{
@@ -52,9 +53,6 @@ public class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOptionsMonito
 				workItems.Add(x);
 			});
 		}
-
-		// Create a WIQL (Work Item Query Language) query
-
 
 		return workItems.Select(workItemAssembler.Convert).GroupBy(i => i.App.Name).ToDictionary(pair => pair.Key, pair => pair.ToList());
 	}
@@ -76,28 +74,36 @@ public class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOptionsMonito
 			AddField(WorkItemAssembler.PriorityFieldId, workItemAssembler.ConvertPriority(workItem.Priority)),
 			AddField(WorkItemAssembler.MantisIdField, workItem.IdMantis),
 			AddField(WorkItemAssembler.MantisCreatedAtField, workItem.MantisCreatedAt),
-			AddField(WorkItemAssembler.MantisUpdatedAtField, workItem.MantisUpdatedAt)
+			AddField(WorkItemAssembler.MantisUpdatedAtField, workItem.MantisUpdatedAt),
+			AddField(WorkItemAssembler.HashField, workItem.Hash),
 		};
 
 		// Create the work item
 		var result = await client.CreateWorkItemAsync(patchDocument, configMonitor.CurrentValue.Project, "Issue");
 
+		var keys = workItemAssembler.GetStatusKey(result.Fields)!;
+
 		patchDocument = new JsonPatchDocument
 		{
-			UpdateField(WorkItemAssembler.StatusFieldId, workItemAssembler.ConvertStatus(workItem.Status))
+			Capacity = keys.Count
 		};
 
-		result = await client.UpdateWorkItemAsync(patchDocument, result.Id!.Value);
+		patchDocument.AddRange(keys.Select(k => UpdateField(k, workItemAssembler.ConvertStatus(workItem.Status))));
 
+		result = await client.UpdateWorkItemAsync(patchDocument, result.Id!.Value);
 
 		return workItemAssembler.Convert(result);
 	}
 
 	public async Task<WorkItem> UpdateWorkItem(UpdateWorkItemPayload workItem)
 	{
-		using var _ = LogAdapter();
+		using var _ = LogAdapter($"{Log.F(workItem.Id)}");
 
 		var client = GetWorkItemClient();
+
+		var realItem = await client.GetWorkItemAsync(workItem.Id);
+
+		var keys = workItemAssembler.GetStatusKey(realItem.Fields)!;
 
 		var patchDocument = new JsonPatchDocument
 		{
@@ -106,14 +112,25 @@ public class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOptionsMonito
 			UpdateField(WorkItemAssembler.CommentairesFieldId, workItem.Comments),
 			UpdateField(WorkItemAssembler.SeverityFieldId, workItemAssembler.ConvertSeverity(workItem.Severity)),
 			UpdateField(WorkItemAssembler.PriorityFieldId, workItemAssembler.ConvertPriority(workItem.Priority)),
-			UpdateField(WorkItemAssembler.StatusFieldId, workItemAssembler.ConvertStatus(workItem.Status)),
 			UpdateField(WorkItemAssembler.MantisUpdatedAtField, workItem.MantisUpdatedAt),
-			UpdateField(WorkItemAssembler.UpdatedAtFieldId, workItem.MantisUpdatedAt)
+			UpdateField(WorkItemAssembler.UpdatedAtFieldId, workItem.MantisUpdatedAt),
+			UpdateField(WorkItemAssembler.HashField, workItem.Hash),
 		};
+
+		patchDocument.AddRange(keys.Select(k => UpdateField(k, workItemAssembler.ConvertStatus(workItem.Status))));
 
 		var result = await client.UpdateWorkItemAsync(patchDocument, workItem.Id);
 
 		return workItemAssembler.Convert(result);
+	}
+
+	public async Task DeleteWorkItem(int id)
+	{
+		using var _ = LogAdapter($"{Log.F(id)}");
+
+		var client = GetWorkItemClient();
+
+		await client.DeleteWorkItemAsync(id);
 	}
 
 

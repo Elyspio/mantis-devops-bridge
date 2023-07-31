@@ -21,7 +21,7 @@ public class BridgeService(ILogger<BridgeService> logger, IIssueService issueSer
 
 	public Task StartAsync(CancellationToken cancellationToken)
 	{
-		_timer = new Timer(Work, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
+		_timer = new Timer(Work, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
 
 		return Task.CompletedTask;
 	}
@@ -36,6 +36,13 @@ public class BridgeService(ILogger<BridgeService> logger, IIssueService issueSer
 	private void Work(object? state)
 	{
 		using var _ = LogService();
-		issueService.Synchronize().GetAwaiter().GetResult();
+		try
+		{
+			issueService.Synchronize().GetAwaiter().GetResult();
+		}
+		catch (Exception e)
+		{
+			Console.Error.WriteLine(e);
+		}
 	}
 }

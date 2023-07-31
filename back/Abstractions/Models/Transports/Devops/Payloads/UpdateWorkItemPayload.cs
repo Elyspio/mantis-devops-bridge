@@ -1,22 +1,23 @@
 ﻿using MantisDevopsBridge.Api.Abstractions.Models.Base.Issues.Enums;
 
-namespace MantisDevopsBridge.Api.Abstractions.Models.Transports.Devops.WorkItems;
+namespace MantisDevopsBridge.Api.Abstractions.Models.Transports.Devops.Payloads;
 
 public class UpdateWorkItemPayload
 {
-	public required int Id { get; set; }
+	public required int Id { get; init; }
 
-	public required string Comments { get; set; }
+	public required string Comments { get; init; }
 
-	public required DateTime MantisUpdatedAt { get; set; }
+	public required DateTime MantisUpdatedAt { get; init; }
 
-	public required string Summary { get; set; }
+	public required string Summary { get; init; }
 
-	public required string Description { get; set; }
+	public required string Description { get; init; }
 
-	public required TicketSeverity Severity { get; set; }
+	public required TicketSeverity Severity { get; init; }
 
-	public required TicketPriority Priority { get; set; }
+	public required TicketPriority Priority { get; init; }
 
-	public required TicketStatus Status { get; set; }
+	public required TicketStatus Status { get; init; }
+	public required string Hash { get; init; }
 }

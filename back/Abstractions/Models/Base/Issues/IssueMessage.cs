@@ -3,8 +3,8 @@
 public class IssueMessage
 {
 	public required int IdMessage { get; set; }
-	public required string Text { get; set; }
-	public required string Reporter { get; set; }
-	public required DateTime CreatedAt { get; set; }
-	public required bool Private { get; set; }
+	public required string Text { get; init; }
+	public required string Reporter { get; init; }
+	public required DateTime CreatedAt { get; init; }
+	public required bool Private { get; init; }
 }

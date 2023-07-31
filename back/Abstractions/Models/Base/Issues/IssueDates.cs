@@ -2,6 +2,6 @@
 
 public class IssueDates
 {
-	public DateTime CreatedAt { get; set; }
-	public DateTime? UpdatedAt { get; set; }
+	public DateTime CreatedAt { get; init; }
+	public DateTime? UpdatedAt { get; init; }
 }

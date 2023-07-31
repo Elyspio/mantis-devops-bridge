@@ -9,7 +9,6 @@ public class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 {
 	public const string SeverityFieldId = "Custom.3eb9946d-5bbf-4c69-97ee-7186896f0484";
 	public const string PriorityFieldId = "Custom.047c51b8-74c0-47a8-aec9-03a0b341d6f8";
-	public const string StatusFieldId = "WEF_69A555A049104BE7AB76C1579891E534_Kanban.Column";
 	public const string TitleFieldId = "System.Title";
 	public const string AreaFieldId = "System.AreaPath";
 	public const string DescriptionFieldId = "System.Description";
@@ -20,6 +19,7 @@ public class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 	public const string MantisIdField = "Custom.IdMantis";
 	public const string MantisUpdatedAtField = "Custom.UpdatedAt";
 	public const string MantisCreatedAtField = "Custom.CreatedAt";
+	public const string HashField = "Custom.Hash";
 
 
 	public WorkItem Convert(Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem item)
@@ -45,7 +45,8 @@ public class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 			MantisUpdatedAt = ParseDate(fields[MantisUpdatedAtField]),
 			MantisCreatedAt = ParseDate(fields[MantisCreatedAtField]),
 			CreatedAt = ParseDate(fields[CreatedAtFieldId]),
-			UpdatedAt = ParseDate(fields[UpdatedAtFieldId])
+			UpdatedAt = ParseDate(fields[UpdatedAtFieldId]),
+			Hash = (string) fields[HashField]
 		};
 	}
 
@@ -61,13 +62,17 @@ public class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 			"élevée" => TicketPriority.High,
 			"urgente" => TicketPriority.Urgent,
 			"immédiate" => TicketPriority.Immediate,
-			_ => TicketPriority.Unknown
+			_ => throw new ArgumentOutOfRangeException(nameof(priority), $"La valeur {priority} n'a pas pu être converti en {nameof(TicketPriority)}")
 		};
 	}
 
 	private TicketStatus ParseStatus(IDictionary<string, object> fields)
 	{
-		var status = ((string)fields[StatusFieldId]).ToLower();
+		var key = GetStatusKey(fields).LastOrDefault();
+
+		if (key == default) return TicketStatus.Created;
+        
+		var status = ((string)fields[key]).ToLower();
 		return status switch
 		{
 			"nouveau" => TicketStatus.Created,
@@ -81,8 +86,13 @@ public class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 			"livré préprod" => TicketStatus.DeliveredInPreProd,
 			"livré prod" => TicketStatus.DeliveredProd,
 			"fermé" => TicketStatus.Closed,
-			_ => TicketStatus.Unknown
+			_ => TicketStatus.Created
 		};
+	}
+
+	public List<string> GetStatusKey(IDictionary<string, object> fields)
+	{
+		return fields.Keys.Where(k => k.EndsWith("Kanban.Column")).ToList();
 	}
 
 	private TicketSeverity ParseSeverity(IDictionary<string, object> fields)
@@ -94,7 +104,7 @@ public class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 			"mineur" => TicketSeverity.Minor,
 			"majeur" => TicketSeverity.Major,
 			"bloquant" => TicketSeverity.Block,
-			_ => TicketSeverity.Unknown
+			_ => throw new ArgumentOutOfRangeException(nameof(severity), $"La valeur {severity} n'a pas pu être converti en {nameof(TicketSeverity)}")
 		};
 	}
 
@@ -134,7 +144,6 @@ public class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 	{
 		return workItemSeverity switch
 		{
-			TicketSeverity.Unknown => "Inconnu",
 			TicketSeverity.Feature => "Fonctionnalité",
 			TicketSeverity.Minor => "Mineur",
 			TicketSeverity.Major => "Majeur",
@@ -147,7 +156,6 @@ public class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 	{
 		return workItemPriority switch
 		{
-			TicketPriority.Unknown => "inconnue",
 			TicketPriority.None => "aucune",
 			TicketPriority.Low => "basse",
 			TicketPriority.Normal => "normale",
@@ -162,7 +170,6 @@ public class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 	{
 		return workItemStatus switch
 		{
-			TicketStatus.Unknown => "Nouveau",
 			TicketStatus.Created => "Nouveau",
 			TicketStatus.Feedback => "Commentaire",
 			TicketStatus.Acknowledged => "Accepté",

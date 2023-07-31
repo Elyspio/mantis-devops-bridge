@@ -6,6 +6,7 @@ using MantisDevopsBridge.Api.Abstractions.Configs;
 using MantisDevopsBridge.Api.Abstractions.Interfaces.Clients;
 using MantisDevopsBridge.Api.Abstractions.Interfaces.Services;
 using MantisDevopsBridge.Api.Abstractions.Models.Base.Issues;
+using MantisDevopsBridge.Api.Abstractions.Models.Transports.Devops.Payloads;
 using MantisDevopsBridge.Api.Abstractions.Models.Transports.Devops.WorkItems;
 using MantisDevopsBridge.Api.Abstractions.Models.Transports.Mantis.Payloads;
 using MantisDevopsBridge.Api.Abstractions.Models.Transports.Mantis.Tickets;
@@ -24,12 +25,12 @@ public class IssueService(IMantisClient mantisClient, IDevopsBoardClient devopsB
 	{
 		using var _ = LogService();
 
-		var tickets = mantisClient.GetAllTickets();
-		var items = devopsBoardClient.GetWorkItems();
+		var allMantis = mantisClient.GetAllTickets();
+		var boards = devopsBoardClient.GetWorkItems();
 
-		await Task.WhenAll(tickets, items);
+		await Task.WhenAll(allMantis, boards);
 
-		var allItems = items.Result.SelectMany(i => i.Value).ToList();
+		var allItems = boards.Result.SelectMany(i => i.Value).ToList();
 
 
 		#region Mantis -> Board
@@ -37,32 +38,44 @@ public class IssueService(IMantisClient mantisClient, IDevopsBoardClient devopsB
 		var ticketToCreate = new List<Ticket>();
 		var ticketToUpdate = new List<(int IdWorkItem, Ticket Ticket)>();
 
-		foreach (var ticket in tickets.Result)
+		foreach (var ticket in allMantis.Result)
 		{
-			var item = allItems.Find(i => i.IdMantis == ticket.IdMantis);
-			if (item == default) ticketToCreate.Add(ticket);
-			else if (item.MantisUpdatedAt > ticket.Dates.UpdatedAt) ticketToUpdate.Add((item.Id, ticket));
+			var board = allItems.Find(i => i.IdMantis == ticket.IdMantis);
+			if (board == default) ticketToCreate.Add(ticket);
+			else if (board.Hash != ticket.Hash) ticketToUpdate.Add((board.Id, ticket));
 		}
 
-		await ticketToCreate.Parallelize((t, _) => CreateWorkItem(t));
-		await ticketToUpdate.Parallelize((pair, _) => UpdateWorkItem(pair.IdWorkItem, pair.Ticket));
+		if (ticketToCreate.Count != 0) await ticketToCreate.Parallelize((t, _) => CreateWorkItem(t));
+
+		if (ticketToUpdate.Count != 0) await ticketToUpdate.Parallelize((pair, _) => UpdateWorkItem(pair.IdWorkItem, pair.Ticket));
+
+		#endregion
+
+		#region Delete Board without Mantis
+
+		var itemsToDelete = allItems.Where(i => allMantis.Result.All(t => t.IdMantis != i.IdMantis)).ToList();
+
+		if (itemsToDelete.Count != 0) await itemsToDelete.Parallelize((item, _) => devopsBoardClient.DeleteWorkItem(item.Id));
 
 		#endregion
 
 		#region Board -> Mantis
 
-		var boardToUpdate = allItems.Where(b => tickets.Result.First(t => t.IdMantis == b.IdMantis).Dates.UpdatedAt < b.UpdatedAt).ToList();
+		var boardToUpdate = allItems
+			.Except(itemsToDelete)
+			.Where(b => allMantis.Result.FirstOrDefault(t => t.IdMantis == b.IdMantis)?.Dates.UpdatedAt < b.UpdatedAt)
+			.ToList();
 
-		await boardToUpdate.Parallelize((item, _) => UpdateTicket(item));
+		if (boardToUpdate.Count != 0) await boardToUpdate.Parallelize((item, _) => UpdateTicket(item));
 
 		#endregion
 	}
 
-	private Task UpdateTicket(Issue item)
+	private async Task UpdateTicket(Issue item)
 	{
 		using var _ = LogService($"{Log.F(item.IdMantis)}");
 
-		return mantisClient.UpdateTicket(new UpdateTicketPayload
+		await mantisClient.UpdateTicket(new UpdateTicketPayload
 		{
 			IdMantis = item.IdMantis,
 			Priority = item.Priority,
@@ -86,7 +99,8 @@ public class IssueService(IMantisClient mantisClient, IDevopsBoardClient devopsB
 			Status = t.Status,
 			Summary = t.Summary,
 			MantisUpdatedAt = t.Dates.UpdatedAt ?? DateTime.Now,
-			MantisCreatedAt = t.Dates.CreatedAt
+			MantisCreatedAt = t.Dates.CreatedAt,
+			Hash = t.Hash
 		});
 	}
 
@@ -103,7 +117,8 @@ public class IssueService(IMantisClient mantisClient, IDevopsBoardClient devopsB
 			Severity = t.Severity,
 			Status = t.Status,
 			Summary = t.Summary,
-			MantisUpdatedAt = t.Dates.UpdatedAt ?? DateTime.Now
+			MantisUpdatedAt = t.Dates.UpdatedAt ?? DateTime.Now,
+			Hash = t.Hash
 		});
 	}
 

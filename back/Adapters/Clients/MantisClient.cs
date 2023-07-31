@@ -50,15 +50,15 @@ internal class MantisClient(ILogger<MantisConfig> logger, IOptionsMonitor<Mantis
 		{
 			status = new
 			{
-				name = ticketAssembler.ConvertStatus(ticket.Status)
+				id = (int) ticket.Status
 			},
 			priority = new
 			{
-				name = ticketAssembler.ConvertPriority(ticket.Priority)
+				id = (int) ticket.Priority
 			},
 			severity = new
 			{
-				name = ticketAssembler.ConvertSeverity(ticket.Severity)
+				id = (int) ticket.Severity
 			}
 		});
 	}
@@ -74,6 +74,7 @@ internal class MantisClient(ILogger<MantisConfig> logger, IOptionsMonitor<Mantis
 		if (body is not null)
 		{
 			var bodyContent = JsonConvert.SerializeObject(body);
+			Console.WriteLine(body);
 			request.Content = new StringContent(bodyContent, Encoding.UTF8, "application/json");
 		}
 

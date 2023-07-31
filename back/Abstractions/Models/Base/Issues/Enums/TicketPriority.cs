@@ -2,11 +2,10 @@
 
 public enum TicketPriority
 {
-	Unknown,
-	None,
-	Low,
-	Normal,
-	High,
-	Urgent,
-	Immediate
+	None = 10,
+	Low = 20,
+	Normal = 30,
+	High = 40,
+	Urgent = 50,
+	Immediate = 60
 }
