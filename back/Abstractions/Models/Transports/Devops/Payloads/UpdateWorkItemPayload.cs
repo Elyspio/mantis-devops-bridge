@@ -2,7 +2,7 @@
 
 namespace MantisDevopsBridge.Api.Abstractions.Models.Transports.Devops.Payloads;
 
-public class UpdateWorkItemPayload
+public sealed class UpdateWorkItemPayload
 {
 	public required int Id { get; init; }
 

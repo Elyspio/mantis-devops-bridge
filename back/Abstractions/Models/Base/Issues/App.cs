@@ -2,7 +2,7 @@
 
 namespace MantisDevopsBridge.Api.Abstractions.Models.Base.Issues;
 
-public class App
+public sealed class App
 {
 	public required AppName Name { get; init; }
 	public required AppPlatform Platform { get; init; }

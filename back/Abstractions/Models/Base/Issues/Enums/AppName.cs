@@ -4,5 +4,6 @@ public enum AppName
 {
 	Parceo,
 	Azurezo,
-	Spico
+	Spico,
+	MonSisra
 }

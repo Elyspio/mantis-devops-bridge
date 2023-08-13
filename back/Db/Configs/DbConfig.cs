@@ -1,6 +1,6 @@
 ﻿namespace Example.Api.Adapters.Mongo.Configs;
 
-public class DbConfig
+public sealed class DbConfig
 {
 	public const string Section = "Database";
 	public string Username { get; set; }

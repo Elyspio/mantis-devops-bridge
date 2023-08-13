@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace MantisDevopsBridge.Api.Core.Injections;
 
-public class CoreModule : IDotnetModule
+public sealed class CoreModule : IDotnetModule
 {
 	public void Load(IServiceCollection services, IConfiguration configuration)
 	{

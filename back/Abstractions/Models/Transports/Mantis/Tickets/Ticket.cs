@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace MantisDevopsBridge.Api.Abstractions.Models.Transports.Mantis.Tickets;
 
-public class Ticket : Issue
+public sealed class Ticket : Issue
 {
 	public required List<IssueMessage> Messages { get; init; }
 

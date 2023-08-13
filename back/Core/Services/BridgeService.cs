@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace MantisDevopsBridge.Api.Core.Services;
 
-public class BridgeService(ILogger<BridgeService> logger, IIssueService issueService) : TracingService(logger), IHostedService, IDisposable, IAsyncDisposable
+public sealed class BridgeService(ILogger<BridgeService> logger, IIssueService issueService) : TracingService(logger), IHostedService, IDisposable, IAsyncDisposable
 {
 	private Timer? _timer;
 

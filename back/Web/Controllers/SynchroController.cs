@@ -7,7 +7,7 @@ namespace MantisDevopsBridge.Api.Web.Controllers;
 
 [Route("api/synchro")]
 [ApiController]
-public class SynchroController(IIssueService issueService, ILogger<SynchroController> logger) : TracingController(logger)
+public sealed class SynchroController(IIssueService issueService, ILogger<SynchroController> logger) : TracingController(logger)
 {
 	[HttpPost]
 	[ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]

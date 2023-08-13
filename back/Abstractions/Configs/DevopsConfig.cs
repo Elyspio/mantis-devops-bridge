@@ -2,12 +2,12 @@
 
 namespace MantisDevopsBridge.Api.Abstractions.Configs;
 
-public class DevopsConfig
+public sealed class DevopsConfig
 {
 	public const string Section = "Devops";
-	public required EndpointElement Endpoint { get; set; }
+	public required EndpointElement Endpoint { get; init; }
 
-	public required string Project { get; set; }
+	public required string Project { get; init; }
 
-	public required Dictionary<AppName, string> Areas { get; set; }
+	public required string Area { get; init; }
 }

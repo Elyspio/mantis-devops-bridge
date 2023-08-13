@@ -6,7 +6,7 @@ namespace MantisDevopsBridge.Api.Abstractions.Exceptions;
 /// <summary>
 ///     Defines a specialized exception type for HTTP errors.
 /// </summary>
-public class HttpException : Exception
+public  class HttpException : Exception
 {
 	/// <summary>
 	///     Initializes a new instance of the HttpException class with a specific HTTP status code, error message and a

@@ -1,6 +1,6 @@
 ﻿namespace MantisDevopsBridge.Api.Abstractions.Configs;
 
-public class MantisConfig
+public sealed class MantisConfig
 {
 	public const string Section = "Mantis";
 	public required DateTime MinIssuesDate { get; set; }

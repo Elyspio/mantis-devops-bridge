@@ -15,11 +15,11 @@ using Microsoft.Extensions.Options;
 
 namespace MantisDevopsBridge.Api.Core.Services;
 
-public class IssueService(IMantisClient mantisClient, IDevopsBoardClient devopsBoardClient, ILogger<IssueService> logger, IOptionsMonitor<MantisConfig> mantisConfig)
+public sealed class IssueService(IMantisClient mantisClient, IDevopsBoardClient devopsBoardClient, ILogger<IssueService> logger, IOptionsMonitor<MantisConfig> mantisConfig)
 	: TracingService(logger), IIssueService
 {
 	private const string CadenaClosedChar = "🔒";
-	private const string CadenaOpenChar = "🔓";
+	private const string CadenaOpenChar = ";";
 
 	public async Task Synchronize()
 	{
@@ -58,31 +58,8 @@ public class IssueService(IMantisClient mantisClient, IDevopsBoardClient devopsB
 		if (itemsToDelete.Count != 0) await itemsToDelete.Parallelize((item, _) => devopsBoardClient.DeleteWorkItem(item.Id));
 
 		#endregion
-
-		#region Board -> Mantis
-
-		var boardToUpdate = allItems
-			.Except(itemsToDelete)
-			.Where(b => allMantis.Result.FirstOrDefault(t => t.IdMantis == b.IdMantis)?.Dates.UpdatedAt < b.UpdatedAt)
-			.ToList();
-
-		if (boardToUpdate.Count != 0) await boardToUpdate.Parallelize((item, _) => UpdateTicket(item));
-
-		#endregion
 	}
 
-	private async Task UpdateTicket(Issue item)
-	{
-		using var _ = LogService($"{Log.F(item.IdMantis)}");
-
-		await mantisClient.UpdateTicket(new UpdateTicketPayload
-		{
-			IdMantis = item.IdMantis,
-			Priority = item.Priority,
-			Severity = item.Severity,
-			Status = item.Status
-		});
-	}
 
 	private async Task<WorkItem> CreateWorkItem(Ticket t)
 	{

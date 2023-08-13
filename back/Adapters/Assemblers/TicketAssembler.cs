@@ -7,7 +7,7 @@ using Issue = Example.Api.Adapters.Rest.Responses.Mantis.Issue;
 
 namespace Example.Api.Adapters.Rest.Assemblers;
 
-public class TicketAssembler(ILogger<TicketAssembler> logger)
+public sealed class TicketAssembler(ILogger<TicketAssembler> logger)
 {
 	public Ticket Convert(Issue issue)
 	{

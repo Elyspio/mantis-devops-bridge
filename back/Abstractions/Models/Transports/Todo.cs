@@ -4,7 +4,7 @@ using MantisDevopsBridge.Api.Abstractions.Models.Base;
 
 namespace MantisDevopsBridge.Api.Abstractions.Models.Transports;
 
-public class Todo : TodoBase, ITransport
+public sealed class Todo : TodoBase, ITransport
 {
 	[Required] public required Guid Id { get; init; }
 }

@@ -20,7 +20,7 @@ using WorkItem = MantisDevopsBridge.Api.Abstractions.Models.Transports.Devops.Wo
 
 namespace Example.Api.Adapters.Rest.Clients;
 
-public class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOptionsMonitor<DevopsConfig> configMonitor, WorkItemAssembler workItemAssembler) : TracingAdapter(logger),
+public sealed class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOptionsMonitor<DevopsConfig> configMonitor, WorkItemAssembler workItemAssembler) : TracingAdapter(logger),
 	IDevopsBoardClient
 {
 	private DevopsConfig config => configMonitor.CurrentValue;
@@ -34,25 +34,20 @@ public class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOptionsMonito
 
 		var witClient = GetWorkItemClient();
 
-		var appNames = Enum.GetValues<AppName>();
+		var area = configMonitor.CurrentValue.Area;
+		var wiql = new Wiql { Query = $"select * from workitems where [System.AreaPath] = '{area}'" };
 
-		foreach (var appName in appNames)
+		// Execute the query to get work item IDs
+		var queryResult = await witClient.QueryByWiqlAsync(wiql, configMonitor.CurrentValue.Project);
+
+		// Fetch the work items using the IDs obtained from the query
+		var workItemIds = queryResult.WorkItems.Select(wi => wi.Id);
+
+		await Parallel.ForEachAsync(workItemIds, async (id, token) =>
 		{
-			var area = configMonitor.CurrentValue.Areas[appName];
-			var wiql = new Wiql { Query = $"select * from workitems where [System.AreaPath] = '{area}'" };
-
-			// Execute the query to get work item IDs
-			var queryResult = await witClient.QueryByWiqlAsync(wiql, configMonitor.CurrentValue.Project);
-
-			// Fetch the work items using the IDs obtained from the query
-			var workItemIds = queryResult.WorkItems.Select(wi => wi.Id);
-
-			await Parallel.ForEachAsync(workItemIds, async (id, token) =>
-			{
-				var x = await witClient.GetWorkItemAsync(id, cancellationToken: token);
-				workItems.Add(x);
-			});
-		}
+			var x = await witClient.GetWorkItemAsync(id, cancellationToken: token);
+			workItems.Add(x);
+		});
 
 		return workItems.Select(workItemAssembler.Convert).GroupBy(i => i.App.Name).ToDictionary(pair => pair.Key, pair => pair.ToList());
 	}
@@ -65,13 +60,14 @@ public class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOptionsMonito
 
 		var patchDocument = new JsonPatchDocument
 		{
-			AddField(WorkItemAssembler.AreaFieldId, configMonitor.CurrentValue.Areas[workItem.App.Name]),
+			AddField(WorkItemAssembler.AreaFieldId, configMonitor.CurrentValue.Area),
 			AddField(WorkItemAssembler.TitleFieldId, workItem.Summary),
 			AddField(WorkItemAssembler.DescriptionFieldId, workItem.Description),
 			AddField(WorkItemAssembler.CommentairesFieldId, workItem.Comments),
 			AddField(WorkItemAssembler.TagsFieldId, workItemAssembler.ConvertPlatform(workItem.App.Platform)),
 			AddField(WorkItemAssembler.SeverityFieldId, workItemAssembler.ConvertSeverity(workItem.Severity)),
 			AddField(WorkItemAssembler.PriorityFieldId, workItemAssembler.ConvertPriority(workItem.Priority)),
+			AddField(WorkItemAssembler.RegionFieldId, workItemAssembler.ConvertRegion(workItem.App.Name)),
 			AddField(WorkItemAssembler.MantisIdField, workItem.IdMantis),
 			AddField(WorkItemAssembler.MantisCreatedAtField, workItem.MantisCreatedAt),
 			AddField(WorkItemAssembler.MantisUpdatedAtField, workItem.MantisUpdatedAt),

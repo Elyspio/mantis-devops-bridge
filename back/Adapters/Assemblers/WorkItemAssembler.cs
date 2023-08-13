@@ -5,9 +5,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Example.Api.Adapters.Rest.Assemblers;
 
-public class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
+public sealed class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 {
 	public const string SeverityFieldId = "Custom.3eb9946d-5bbf-4c69-97ee-7186896f0484";
+	public const string RegionFieldId = "Custom.972d0f37-c1aa-45d5-b4e2-e206b407f08a";
 	public const string PriorityFieldId = "Custom.047c51b8-74c0-47a8-aec9-03a0b341d6f8";
 	public const string TitleFieldId = "System.Title";
 	public const string AreaFieldId = "System.AreaPath";
@@ -34,7 +35,7 @@ public class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 			App = new App
 			{
 				Environment = "N/A",
-				Name = ParseName(fields),
+				Name = ParseRegion(fields),
 				Platform = ParsePlatform(fields)
 			},
 			Severity = ParseSeverity(fields),
@@ -108,12 +109,13 @@ public class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 		};
 	}
 
-	private AppName ParseName(IDictionary<string, object> fields)
+	private AppName ParseRegion(IDictionary<string, object> fields)
 	{
-		var content = ((string)fields[AreaFieldId]).ToLower();
-		if (content.Contains("spico")) return AppName.Spico;
-		if (content.Contains("azurezo")) return AppName.Azurezo;
-		if (content.Contains("parceo")) return AppName.Parceo;
+		var content = ((string)fields[RegionFieldId]).ToLower();
+		if (content.Contains("occitanie")) return AppName.Spico;
+		if (content.Contains("paca")) return AppName.Azurezo;
+		if (content.Contains("pulsy")) return AppName.Parceo;
+		if (content.Contains("aura")) return AppName.MonSisra;
 
 		throw new ArgumentOutOfRangeException(nameof(content), $"La valeur {content} n'a pas pu être converti en {nameof(AppName)}");
 	}
@@ -137,6 +139,19 @@ public class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 			AppPlatform.Web => "Web",
 			AppPlatform.Bureau => "Bureau",
 			_ => throw new ArgumentOutOfRangeException(nameof(platform), platform, null)
+		};
+	}
+
+
+	public string ConvertRegion(AppName name)
+	{
+		return name switch
+		{
+			AppName.MonSisra => "Aura",
+			AppName.Azurezo => "Paca",
+			AppName.Parceo => "Pulsy",
+			AppName.Spico => "Occitanie",
+			_ => throw new ArgumentOutOfRangeException(nameof(name), name, null)
 		};
 	}
 

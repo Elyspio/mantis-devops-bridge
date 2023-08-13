@@ -5,7 +5,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace MantisDevopsBridge.Api.Abstractions.Models.Entities;
 
-public class TodoEntity : TodoBase, IEntity
+public sealed class TodoEntity : TodoBase, IEntity
 {
 	[BsonId]
 	[BsonRepresentation(BsonType.ObjectId)]

@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Example.Api.Adapters.Mongo.Injections;
 
-public class MongoAdapterModule : IDotnetModule
+public sealed class MongoAdapterModule : IDotnetModule
 {
 	public void Load(IServiceCollection services, IConfiguration configuration)
 	{

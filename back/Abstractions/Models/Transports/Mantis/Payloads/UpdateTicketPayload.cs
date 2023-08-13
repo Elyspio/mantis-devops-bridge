@@ -2,7 +2,7 @@
 
 namespace MantisDevopsBridge.Api.Abstractions.Models.Transports.Mantis.Payloads;
 
-public class UpdateTicketPayload
+public sealed class UpdateTicketPayload
 {
 	public required int IdMantis { get; init; }
 	public required TicketStatus Status { get; init; }

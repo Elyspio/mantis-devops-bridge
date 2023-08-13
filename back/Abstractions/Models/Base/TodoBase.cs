@@ -1,6 +1,6 @@
 ﻿namespace MantisDevopsBridge.Api.Abstractions.Models.Base;
 
-public class TodoBase
+public abstract class TodoBase
 {
 	public required string Label { get; init; }
 
