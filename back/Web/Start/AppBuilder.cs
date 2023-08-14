@@ -1,5 +1,5 @@
-﻿using Example.Api.Adapters.Mongo.Injections;
-using Example.Api.Adapters.Rest.Injections;
+﻿using MantisDevopsBridge.Api.Adapters.Mongo.Injections;
+using MantisDevopsBridge.Api.Adapters.Rest.Injections;
 using MantisDevopsBridge.Api.Abstractions.Interfaces.Injections;
 using MantisDevopsBridge.Api.Core.Injections;
 using MantisDevopsBridge.Api.Web.Technical.Extensions;

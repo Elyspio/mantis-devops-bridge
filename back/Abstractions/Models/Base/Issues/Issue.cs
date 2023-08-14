@@ -8,6 +8,7 @@ public  class Issue
 
 	public required string Summary { get; init; }
 	public required string Description { get; init; }
+	public required string StepsToReproduce { get; init; }
 	public required App App { get; init; }
 	public required TicketSeverity Severity { get; init; }
 	public required TicketPriority Priority { get; init; }

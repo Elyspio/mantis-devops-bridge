@@ -19,7 +19,6 @@ public sealed class IssueService(IMantisClient mantisClient, IDevopsBoardClient 
 	: TracingService(logger), IIssueService
 {
 	private const string CadenaClosedChar = "🔒";
-	private const string CadenaOpenChar = ";";
 
 	public async Task Synchronize()
 	{
@@ -58,12 +57,33 @@ public sealed class IssueService(IMantisClient mantisClient, IDevopsBoardClient 
 		if (itemsToDelete.Count != 0) await itemsToDelete.Parallelize((item, _) => devopsBoardClient.DeleteWorkItem(item.Id));
 
 		#endregion
+
+		#region Board -> Mantis
+
+		var boardToUpdate = allItems
+			.Except(itemsToDelete)
+			.Where(b => allMantis.Result.FirstOrDefault(t => t.IdMantis == b.IdMantis)?.Dates.UpdatedAt < b.UpdatedAt)
+			.ToList();
+
+		if (boardToUpdate.Count != 0) await boardToUpdate.Parallelize((item, _) => UpdateTicket(item));
+
+		#endregion
 	}
 
+	private async Task UpdateTicket(Issue item)
+	{
+		using var _ = LogService($"{Log.F(item.IdMantis)}");
+
+		await mantisClient.UpdateTicket(new UpdateTicketPayload
+		{
+			IdMantis = item.IdMantis,
+			Status = item.Status
+		});
+	}
 
 	private async Task<WorkItem> CreateWorkItem(Ticket t)
 	{
-		using var _ = LogService();
+		using var _ = LogService($"{Log.F(t.IdMantis)}");
 
 		return await devopsBoardClient.CreateWorkItem(new CreateWorkItemPayload
 		{
@@ -71,6 +91,7 @@ public sealed class IssueService(IMantisClient mantisClient, IDevopsBoardClient 
 			App = t.App,
 			Comments = ComputeComments(t),
 			Description = t.Description,
+			StepsToReproduce = t.StepsToReproduce,
 			Priority = t.Priority,
 			Severity = t.Severity,
 			Status = t.Status,
@@ -115,8 +136,12 @@ public sealed class IssueService(IMantisClient mantisClient, IDevopsBoardClient 
 
 		foreach (var message in ticket.Messages)
 		{
-			var cadenaChar = message.Private ? CadenaClosedChar : CadenaOpenChar;
-			sb.Append($"<p>{cadenaChar} | {message.CreatedAt:g} | {message.Reporter}: {message.Text}</p>");
+			sb.Append($"<p>{message.CreatedAt:g} | {message.Reporter}:");
+			if (message.Private)
+			{
+				sb.Append($" {CadenaClosedChar}");
+			}
+			sb.Append($" {message.Text}</p>");
 		}
 
 		return $"<div>{sb}</div>";

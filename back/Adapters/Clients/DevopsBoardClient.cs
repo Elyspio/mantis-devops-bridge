@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
-using Example.Api.Adapters.Rest.Assemblers;
-using Example.Api.Adapters.Rest.Responses.Mantis;
+using MantisDevopsBridge.Api.Adapters.Rest.Assemblers;
+using MantisDevopsBridge.Api.Adapters.Rest.Responses.Mantis;
 using MantisDevopsBridge.Api.Abstractions.Common.Helpers;
 using MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing;
 using MantisDevopsBridge.Api.Abstractions.Configs;
@@ -8,6 +8,8 @@ using MantisDevopsBridge.Api.Abstractions.Interfaces.Clients;
 using MantisDevopsBridge.Api.Abstractions.Models.Base.Issues.Enums;
 using MantisDevopsBridge.Api.Abstractions.Models.Transports.Devops.Payloads;
 using MantisDevopsBridge.Api.Abstractions.Models.Transports.Devops.WorkItems;
+using MantisDevopsBridge.Api.Adapters.Rest.Assemblers.Properties;
+using MantisDevopsBridge.Api.Adapters.Rest.Assemblers.Properties.App;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
@@ -18,15 +20,18 @@ using Microsoft.VisualStudio.Services.WebApi.Patch;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 using WorkItem = MantisDevopsBridge.Api.Abstractions.Models.Transports.Devops.WorkItems.WorkItem;
 
-namespace Example.Api.Adapters.Rest.Clients;
+namespace MantisDevopsBridge.Api.Adapters.Rest.Clients;
 
-public sealed class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOptionsMonitor<DevopsConfig> configMonitor, WorkItemAssembler workItemAssembler) : TracingAdapter(logger),
+public sealed class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOptionsMonitor<DevopsConfig> configMonitor, WorkItemAssembler workItemAssembler, AppAssembler appAssembler, SeverityAssembler severityAssembler, PriorityAssembler priorityAssembler, StatusAssembler statusAssembler, AppRegionAssembler regionAssembler) : TracingAdapter(logger),
 	IDevopsBoardClient
 {
 	private DevopsConfig config => configMonitor.CurrentValue;
 	private EndpointElement endpoint => config.Endpoint;
 
-	public async Task<Dictionary<AppName, List<WorkItem>>> GetWorkItems()
+
+	private const string WorkItemType = "Bug Externe";
+
+	public async Task<Dictionary<AppRegion, List<WorkItem>>> GetWorkItems()
 	{
 		using var _ = LogAdapter();
 
@@ -35,7 +40,7 @@ public sealed class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOption
 		var witClient = GetWorkItemClient();
 
 		var area = configMonitor.CurrentValue.Area;
-		var wiql = new Wiql { Query = $"select * from workitems where [System.AreaPath] = '{area}'" };
+		var wiql = new Wiql { Query = $"select * from workitems where [System.AreaPath] = '{area}' and [System.WorkItemType] = '{WorkItemType}'" };
 
 		// Execute the query to get work item IDs
 		var queryResult = await witClient.QueryByWiqlAsync(wiql, configMonitor.CurrentValue.Project);
@@ -49,7 +54,7 @@ public sealed class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOption
 			workItems.Add(x);
 		});
 
-		return workItems.Select(workItemAssembler.Convert).GroupBy(i => i.App.Name).ToDictionary(pair => pair.Key, pair => pair.ToList());
+		return workItems.Select(workItemAssembler.Convert).GroupBy(i => i.App.Region).ToDictionary(pair => pair.Key, pair => pair.ToList());
 	}
 
 	public async Task<WorkItem> CreateWorkItem(CreateWorkItemPayload workItem)
@@ -63,11 +68,12 @@ public sealed class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOption
 			AddField(WorkItemAssembler.AreaFieldId, configMonitor.CurrentValue.Area),
 			AddField(WorkItemAssembler.TitleFieldId, workItem.Summary),
 			AddField(WorkItemAssembler.DescriptionFieldId, workItem.Description),
+			AddField(WorkItemAssembler.StepsToReproduceFieldId, workItem.StepsToReproduce),
 			AddField(WorkItemAssembler.CommentairesFieldId, workItem.Comments),
-			AddField(WorkItemAssembler.TagsFieldId, workItemAssembler.ConvertPlatform(workItem.App.Platform)),
-			AddField(WorkItemAssembler.SeverityFieldId, workItemAssembler.ConvertSeverity(workItem.Severity)),
-			AddField(WorkItemAssembler.PriorityFieldId, workItemAssembler.ConvertPriority(workItem.Priority)),
-			AddField(WorkItemAssembler.RegionFieldId, workItemAssembler.ConvertRegion(workItem.App.Name)),
+			AddField(WorkItemAssembler.TagsFieldId, appAssembler.ComputeTags(workItem.App)),
+			AddField(WorkItemAssembler.SeverityFieldId, severityAssembler.ToAzure(workItem.Severity)),
+			AddField(WorkItemAssembler.PriorityFieldId, priorityAssembler.ToAzure(workItem.Priority)),
+			AddField(WorkItemAssembler.RegionFieldId, regionAssembler.ToAzure(workItem.App.Region)),
 			AddField(WorkItemAssembler.MantisIdField, workItem.IdMantis),
 			AddField(WorkItemAssembler.MantisCreatedAtField, workItem.MantisCreatedAt),
 			AddField(WorkItemAssembler.MantisUpdatedAtField, workItem.MantisUpdatedAt),
@@ -75,16 +81,16 @@ public sealed class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOption
 		};
 
 		// Create the work item
-		var result = await client.CreateWorkItemAsync(patchDocument, configMonitor.CurrentValue.Project, "Issue");
+		var result = await client.CreateWorkItemAsync(patchDocument, configMonitor.CurrentValue.Project, WorkItemType);
 
-		var keys = workItemAssembler.GetStatusKey(result.Fields)!;
+		var keys = statusAssembler.GetStatusKey(result.Fields)!;
 
 		patchDocument = new JsonPatchDocument
 		{
 			Capacity = keys.Count
 		};
 
-		patchDocument.AddRange(keys.Select(k => UpdateField(k, workItemAssembler.ConvertStatus(workItem.Status))));
+		patchDocument.AddRange(keys.Select(k => UpdateField(k, statusAssembler.ToAzure(workItem.Status))));
 
 		result = await client.UpdateWorkItemAsync(patchDocument, result.Id!.Value);
 
@@ -99,21 +105,21 @@ public sealed class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOption
 
 		var realItem = await client.GetWorkItemAsync(workItem.Id);
 
-		var keys = workItemAssembler.GetStatusKey(realItem.Fields)!;
+		var keys = statusAssembler.GetStatusKey(realItem.Fields)!;
 
 		var patchDocument = new JsonPatchDocument
 		{
 			UpdateField(WorkItemAssembler.TitleFieldId, workItem.Summary),
 			UpdateField(WorkItemAssembler.DescriptionFieldId, workItem.Description),
 			UpdateField(WorkItemAssembler.CommentairesFieldId, workItem.Comments),
-			UpdateField(WorkItemAssembler.SeverityFieldId, workItemAssembler.ConvertSeverity(workItem.Severity)),
-			UpdateField(WorkItemAssembler.PriorityFieldId, workItemAssembler.ConvertPriority(workItem.Priority)),
+			UpdateField(WorkItemAssembler.SeverityFieldId, severityAssembler.ToAzure(workItem.Severity)),
+			UpdateField(WorkItemAssembler.PriorityFieldId, priorityAssembler.ToAzure(workItem.Priority)),
 			UpdateField(WorkItemAssembler.MantisUpdatedAtField, workItem.MantisUpdatedAt),
 			UpdateField(WorkItemAssembler.UpdatedAtFieldId, workItem.MantisUpdatedAt),
 			UpdateField(WorkItemAssembler.HashField, workItem.Hash),
 		};
 
-		patchDocument.AddRange(keys.Select(k => UpdateField(k, workItemAssembler.ConvertStatus(workItem.Status))));
+		patchDocument.AddRange(keys.Select(k => UpdateField(k, statusAssembler.ToAzure(workItem.Status))));
 
 		var result = await client.UpdateWorkItemAsync(patchDocument, workItem.Id);
 

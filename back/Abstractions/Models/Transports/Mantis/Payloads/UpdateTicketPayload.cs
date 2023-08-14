@@ -6,6 +6,4 @@ public sealed class UpdateTicketPayload
 {
 	public required int IdMantis { get; init; }
 	public required TicketStatus Status { get; init; }
-	public required TicketPriority Priority { get; init; }
-	public required TicketSeverity Severity { get; init; }
 }

@@ -11,9 +11,6 @@ public sealed class Ticket : Issue
 
 	public required IssueDates Dates { get; init; }
 
-
-
-
 	public string Hash
 	{
 		get
@@ -28,7 +25,7 @@ public sealed class Ticket : Issue
                 Status,
                 Summary,
                 IdMantis,
-
+                StepsToReproduce,
             });
             // Compute SHA-256 hash
             var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(json));

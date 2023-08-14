@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <EnablePreviewFeatures>True</EnablePreviewFeatures>
-        <RootNamespace>Example.Api.Adapters.Mongo</RootNamespace>
+        <RootNamespace>MantisDevopsBridge.Api.Adapters.Mongo</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

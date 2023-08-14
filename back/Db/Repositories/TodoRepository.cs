@@ -1,4 +1,4 @@
-﻿using Example.Api.Adapters.Mongo.Repositories.Base;
+﻿using MantisDevopsBridge.Api.Adapters.Mongo.Repositories.Base;
 using MantisDevopsBridge.Api.Abstractions.Common.Extensions;
 using MantisDevopsBridge.Api.Abstractions.Common.Helpers;
 using MantisDevopsBridge.Api.Abstractions.Interfaces.Repositories;
@@ -10,7 +10,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-namespace Example.Api.Adapters.Mongo.Repositories;
+namespace MantisDevopsBridge.Api.Adapters.Mongo.Repositories;
 
 internal class TodoRepository(IConfiguration configuration, ILogger<BaseRepository<TodoEntity>> logger) : CrudRepository<TodoEntity, TodoBase>(configuration, logger),
 	ITodoRepository

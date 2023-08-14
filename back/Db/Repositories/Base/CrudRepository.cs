@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace Example.Api.Adapters.Mongo.Repositories.Base;
+namespace MantisDevopsBridge.Api.Adapters.Mongo.Repositories.Base;
 
 /// <inheritdoc cref="ICrudRepository{TEntity,TBase}" />
 internal abstract class CrudRepository<TEntity, TBase>(IConfiguration configuration, ILogger logger) : BaseRepository<TEntity>(configuration, logger),

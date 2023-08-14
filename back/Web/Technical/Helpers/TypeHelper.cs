@@ -49,7 +49,7 @@ public static class TypeHelper
 
 		var fromQueryAttribute = attributes.FirstOrDefault(attr => attr.AttributeType == typeof(FromQueryAttribute));
 		if (fromQueryAttribute == default) return null;
-		var arg = fromQueryAttribute.NamedArguments.FirstOrDefault(arg => arg.MemberName == "Name");
+		var arg = fromQueryAttribute.NamedArguments!.FirstOrDefault(arg => arg.MemberName == "Name");
 		return arg != default ? arg.TypedValue.Value!.ToString()! : null;
 	}
 }

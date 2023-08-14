@@ -1,6 +1,6 @@
 ﻿using System.Text;
-using Example.Api.Adapters.Rest.Assemblers;
-using Example.Api.Adapters.Rest.Responses.Mantis;
+using MantisDevopsBridge.Api.Adapters.Rest.Assemblers;
+using MantisDevopsBridge.Api.Adapters.Rest.Responses.Mantis;
 using MantisDevopsBridge.Api.Abstractions.Common.Helpers;
 using MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing;
 using MantisDevopsBridge.Api.Abstractions.Configs;
@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace Example.Api.Adapters.Rest.Clients;
+namespace MantisDevopsBridge.Api.Adapters.Rest.Clients;
 
 internal class MantisClient(ILogger<MantisConfig> logger, IOptionsMonitor<MantisConfig> config, TicketAssembler ticketAssembler) : TracingAdapter(logger), IMantisClient
 {
@@ -23,7 +23,7 @@ internal class MantisClient(ILogger<MantisConfig> logger, IOptionsMonitor<Mantis
 		using var _ = LogAdapter();
 
 		var tickets = new List<Ticket>();
-		var page = 0;
+		var page = 1;
 		const int pageSize = 25;
 
 		while (true)
@@ -32,7 +32,7 @@ internal class MantisClient(ILogger<MantisConfig> logger, IOptionsMonitor<Mantis
 			var data = await Request<GetTokenResponse>(HttpMethod.Get, requestUri);
 			var ticketsAfterMinDate = data.Issues.Where(i => i.CreatedAt >= config.CurrentValue.MinIssuesDate).ToList();
 			tickets.AddRange(ticketsAfterMinDate.Select(ticketAssembler.Convert));
-			if (ticketsAfterMinDate.Count != data.Issues.Count) break;
+			if (data.Issues.Count == 0 ||ticketsAfterMinDate.Count != data.Issues.Count) break;
 			page++;
 		}
 
@@ -52,14 +52,6 @@ internal class MantisClient(ILogger<MantisConfig> logger, IOptionsMonitor<Mantis
 			{
 				id = (int) ticket.Status
 			},
-			priority = new
-			{
-				id = (int) ticket.Priority
-			},
-			severity = new
-			{
-				id = (int) ticket.Severity
-			}
 		});
 	}
 

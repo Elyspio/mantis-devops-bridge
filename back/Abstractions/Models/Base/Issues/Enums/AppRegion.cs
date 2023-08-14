@@ -1,9 +1,9 @@
 ﻿namespace MantisDevopsBridge.Api.Abstractions.Models.Base.Issues.Enums;
 
-public enum AppName
+public enum AppRegion
 {
-	Parceo,
-	Azurezo,
-	Spico,
-	MonSisra
+	Pulsy,
+	Paca,
+	Occitanie,
+	Aura
 }

@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
-namespace Example.Api.Adapters.Rest.Responses.Mantis;
+namespace MantisDevopsBridge.Api.Adapters.Rest.Responses.Mantis;
 
 public record Attachment(
 	[property: JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]

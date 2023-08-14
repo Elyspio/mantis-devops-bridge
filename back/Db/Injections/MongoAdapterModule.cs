@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Example.Api.Adapters.Mongo.Injections;
+namespace MantisDevopsBridge.Api.Adapters.Mongo.Injections;
 
 public sealed class MongoAdapterModule : IDotnetModule
 {

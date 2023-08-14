@@ -3,7 +3,7 @@ using MantisDevopsBridge.Api.Abstractions.Interfaces.Injections;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Example.Api.Adapters.Rest.Injections;
+namespace MantisDevopsBridge.Api.Adapters.Rest.Injections;
 
 public sealed class RestAdapterModule : IDotnetModule
 {

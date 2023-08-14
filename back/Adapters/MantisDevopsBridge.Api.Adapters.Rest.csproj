@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <EnablePreviewFeatures>True</EnablePreviewFeatures>
-        <RootNamespace>Example.Api.Adapters.Rest</RootNamespace>
+        <RootNamespace>MantisDevopsBridge.Api.Adapters.Rest</RootNamespace>
 
     </PropertyGroup>
 
@@ -27,7 +27,10 @@
 
     <ItemGroup>
         <WCFMetadata Include="Connected Services"/>
+
     </ItemGroup>
+
+
 
 
 </Project>

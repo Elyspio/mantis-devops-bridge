@@ -1,7 +1,7 @@
 ﻿using MongoDB.Driver;
 using MongoDB.Driver.Core.Extensions.DiagnosticSources;
 
-namespace Example.Api.Adapters.Mongo.Technical;
+namespace MantisDevopsBridge.Api.Adapters.Mongo.Technical;
 
 /// <summary>
 ///     Manage mongo client

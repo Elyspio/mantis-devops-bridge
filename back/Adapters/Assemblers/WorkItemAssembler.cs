@@ -1,15 +1,16 @@
 ﻿using MantisDevopsBridge.Api.Abstractions.Models.Base.Issues;
 using MantisDevopsBridge.Api.Abstractions.Models.Base.Issues.Enums;
 using MantisDevopsBridge.Api.Abstractions.Models.Transports.Devops.WorkItems;
-using Microsoft.Extensions.Logging;
+using MantisDevopsBridge.Api.Adapters.Rest.Assemblers.Properties;
+using MantisDevopsBridge.Api.Adapters.Rest.Assemblers.Properties.App;
 
-namespace Example.Api.Adapters.Rest.Assemblers;
+namespace MantisDevopsBridge.Api.Adapters.Rest.Assemblers;
 
-public sealed class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
+public sealed class WorkItemAssembler(AppAssembler appAssembler, PriorityAssembler priorityAssembler, SeverityAssembler severityAssembler, StatusAssembler statusAssembler )
 {
 	public const string SeverityFieldId = "Custom.3eb9946d-5bbf-4c69-97ee-7186896f0484";
 	public const string RegionFieldId = "Custom.972d0f37-c1aa-45d5-b4e2-e206b407f08a";
-	public const string PriorityFieldId = "Custom.047c51b8-74c0-47a8-aec9-03a0b341d6f8";
+	public const string PriorityFieldId = "Custom.5a605c5b-ace5-4fb4-a934-2960ddb2940a";
 	public const string TitleFieldId = "System.Title";
 	public const string AreaFieldId = "System.AreaPath";
 	public const string DescriptionFieldId = "System.Description";
@@ -17,6 +18,7 @@ public sealed class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 	private const string CreatedAtFieldId = "System.CreatedDate";
 	public const string UpdatedAtFieldId = "System.ChangedDate";
 	public const string CommentairesFieldId = "Custom.Commentaires";
+	public const string StepsToReproduceFieldId = "Custom.StepsToReproduce";
 	public const string MantisIdField = "Custom.IdMantis";
 	public const string MantisUpdatedAtField = "Custom.UpdatedAt";
 	public const string MantisCreatedAtField = "Custom.CreatedAt";
@@ -32,173 +34,23 @@ public sealed class WorkItemAssembler(ILogger<WorkItemAssembler> logger)
 			Summary = (string)fields[TitleFieldId],
 			Id = item.Id!.Value,
 			Description = (string)fields[DescriptionFieldId],
-			App = new App
-			{
-				Environment = "N/A",
-				Name = ParseRegion(fields),
-				Platform = ParsePlatform(fields)
-			},
-			Severity = ParseSeverity(fields),
-			Priority = ParsePriority(fields),
-			Status = ParseStatus(fields),
+			App = appAssembler.Convert(item),
+			Severity = severityAssembler.Convert(item),
+			Priority = priorityAssembler.Convert(item),
+			Status = statusAssembler.Convert(item),
 			Comments = (string)fields[CommentairesFieldId],
 			IdMantis = System.Convert.ToInt32(fields[MantisIdField]),
 			MantisUpdatedAt = ParseDate(fields[MantisUpdatedAtField]),
 			MantisCreatedAt = ParseDate(fields[MantisCreatedAtField]),
 			CreatedAt = ParseDate(fields[CreatedAtFieldId]),
 			UpdatedAt = ParseDate(fields[UpdatedAtFieldId]),
-			Hash = (string) fields[HashField]
+			Hash = (string) fields[HashField],
+			StepsToReproduce = (string) fields[StepsToReproduceFieldId]
 		};
 	}
 
 
-	private TicketPriority ParsePriority(IDictionary<string, object> fields)
-	{
-		var priority = ((string)fields[PriorityFieldId]).ToLower();
-		return priority switch
-		{
-			"aucune" => TicketPriority.None,
-			"basse" => TicketPriority.Low,
-			"normale" => TicketPriority.Normal,
-			"élevée" => TicketPriority.High,
-			"urgente" => TicketPriority.Urgent,
-			"immédiate" => TicketPriority.Immediate,
-			_ => throw new ArgumentOutOfRangeException(nameof(priority), $"La valeur {priority} n'a pas pu être converti en {nameof(TicketPriority)}")
-		};
-	}
 
-	private TicketStatus ParseStatus(IDictionary<string, object> fields)
-	{
-		var key = GetStatusKey(fields).LastOrDefault();
-
-		if (key == default) return TicketStatus.Created;
-        
-		var status = ((string)fields[key]).ToLower();
-		return status switch
-		{
-			"nouveau" => TicketStatus.Created,
-			"commentaire" => TicketStatus.Feedback,
-			"accepté" => TicketStatus.Acknowledged,
-			"confirmé" => TicketStatus.Confirmed,
-			"affecté" => TicketStatus.Assigned,
-			"résolu" => TicketStatus.Resolved,
-			"livré coexya" => TicketStatus.Delivered,
-			"livre" => TicketStatus.DeliveredInQualif,
-			"livré préprod" => TicketStatus.DeliveredInPreProd,
-			"livré prod" => TicketStatus.DeliveredProd,
-			"fermé" => TicketStatus.Closed,
-			_ => TicketStatus.Created
-		};
-	}
-
-	public List<string> GetStatusKey(IDictionary<string, object> fields)
-	{
-		return fields.Keys.Where(k => k.EndsWith("Kanban.Column")).ToList();
-	}
-
-	private TicketSeverity ParseSeverity(IDictionary<string, object> fields)
-	{
-		var severity = ((string)fields[SeverityFieldId]).ToLower();
-		return severity switch
-		{
-			"fonctionnalité" => TicketSeverity.Feature,
-			"mineur" => TicketSeverity.Minor,
-			"majeur" => TicketSeverity.Major,
-			"bloquant" => TicketSeverity.Block,
-			_ => throw new ArgumentOutOfRangeException(nameof(severity), $"La valeur {severity} n'a pas pu être converti en {nameof(TicketSeverity)}")
-		};
-	}
-
-	private AppName ParseRegion(IDictionary<string, object> fields)
-	{
-		var content = ((string)fields[RegionFieldId]).ToLower();
-		if (content.Contains("occitanie")) return AppName.Spico;
-		if (content.Contains("paca")) return AppName.Azurezo;
-		if (content.Contains("pulsy")) return AppName.Parceo;
-		if (content.Contains("aura")) return AppName.MonSisra;
-
-		throw new ArgumentOutOfRangeException(nameof(content), $"La valeur {content} n'a pas pu être converti en {nameof(AppName)}");
-	}
-
-	private AppPlatform ParsePlatform(IDictionary<string, object> fields)
-	{
-		var tags = ((string)fields[TagsFieldId]).ToLower();
-		if (tags.Contains("bureau")) return AppPlatform.Bureau;
-		if (tags.Contains("mobile")) return AppPlatform.Mobile;
-		if (tags.Contains("web")) return AppPlatform.Web;
-
-		throw new ArgumentOutOfRangeException(nameof(tags), $"La valeur {tags} n'a pas pu être converti en {nameof(AppPlatform)}");
-	}
-
-
-	public string ConvertPlatform(AppPlatform platform)
-	{
-		return platform switch
-		{
-			AppPlatform.Mobile => "Mobile",
-			AppPlatform.Web => "Web",
-			AppPlatform.Bureau => "Bureau",
-			_ => throw new ArgumentOutOfRangeException(nameof(platform), platform, null)
-		};
-	}
-
-
-	public string ConvertRegion(AppName name)
-	{
-		return name switch
-		{
-			AppName.MonSisra => "Aura",
-			AppName.Azurezo => "Paca",
-			AppName.Parceo => "Pulsy",
-			AppName.Spico => "Occitanie",
-			_ => throw new ArgumentOutOfRangeException(nameof(name), name, null)
-		};
-	}
-
-	public string ConvertSeverity(TicketSeverity workItemSeverity)
-	{
-		return workItemSeverity switch
-		{
-			TicketSeverity.Feature => "Fonctionnalité",
-			TicketSeverity.Minor => "Mineur",
-			TicketSeverity.Major => "Majeur",
-			TicketSeverity.Block => "Bloquant",
-			_ => throw new ArgumentOutOfRangeException(nameof(workItemSeverity), workItemSeverity, null)
-		};
-	}
-
-	public string ConvertPriority(TicketPriority workItemPriority)
-	{
-		return workItemPriority switch
-		{
-			TicketPriority.None => "aucune",
-			TicketPriority.Low => "basse",
-			TicketPriority.Normal => "normale",
-			TicketPriority.High => "élevée",
-			TicketPriority.Urgent => "urgente",
-			TicketPriority.Immediate => "immédiate",
-			_ => throw new ArgumentOutOfRangeException(nameof(workItemPriority), workItemPriority, null)
-		};
-	}
-
-	public string ConvertStatus(TicketStatus workItemStatus)
-	{
-		return workItemStatus switch
-		{
-			TicketStatus.Created => "Nouveau",
-			TicketStatus.Feedback => "Commentaire",
-			TicketStatus.Acknowledged => "Accepté",
-			TicketStatus.Confirmed => "Confirmé",
-			TicketStatus.Assigned => "Affecté",
-			TicketStatus.Resolved => "Résolu",
-			TicketStatus.Delivered => "Livré Coexya",
-			TicketStatus.DeliveredInQualif => "Livré Qualif",
-			TicketStatus.DeliveredInPreProd => "Livré Préprod",
-			TicketStatus.DeliveredProd => "Livré Prod",
-			TicketStatus.Closed => "Fermé",
-			_ => throw new ArgumentOutOfRangeException(nameof(workItemStatus), workItemStatus, null)
-		};
-	}
 
 	private DateTime ParseDate(object date)
 	{

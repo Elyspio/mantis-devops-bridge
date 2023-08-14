@@ -1,4 +1,4 @@
-﻿using Example.Api.Adapters.Mongo.Technical;
+﻿using MantisDevopsBridge.Api.Adapters.Mongo.Technical;
 using MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -7,7 +7,7 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
 
-namespace Example.Api.Adapters.Mongo.Repositories.Base;
+namespace MantisDevopsBridge.Api.Adapters.Mongo.Repositories.Base;
 
 /// <summary>
 ///     Manage entity in MongoDB
