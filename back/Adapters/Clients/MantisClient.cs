@@ -32,7 +32,7 @@ internal class MantisClient(ILogger<MantisConfig> logger, IOptionsMonitor<Mantis
 			var data = await Request<GetTokenResponse>(HttpMethod.Get, requestUri);
 			var ticketsAfterMinDate = data.Issues.Where(i => i.CreatedAt >= config.CurrentValue.MinIssuesDate).ToList();
 			tickets.AddRange(ticketsAfterMinDate.Select(ticketAssembler.Convert));
-			if (data.Issues.Count == 0 ||ticketsAfterMinDate.Count != data.Issues.Count) break;
+			if (data.Issues.Count == 0 || ticketsAfterMinDate.Count != data.Issues.Count) break;
 			page++;
 		}
 
@@ -50,7 +50,7 @@ internal class MantisClient(ILogger<MantisConfig> logger, IOptionsMonitor<Mantis
 		{
 			status = new
 			{
-				id = (int) ticket.Status
+				id = (int)ticket.Status
 			},
 		});
 	}

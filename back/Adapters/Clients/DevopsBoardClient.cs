@@ -14,7 +14,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+using Microsoft.VisualStudio.Services.Account.Client;
 using Microsoft.VisualStudio.Services.Common;
+using Microsoft.VisualStudio.Services.Identity.Client;
+using Microsoft.VisualStudio.Services.Users.Client;
 using Microsoft.VisualStudio.Services.WebApi;
 using Microsoft.VisualStudio.Services.WebApi.Patch;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
@@ -22,12 +25,10 @@ using WorkItem = MantisDevopsBridge.Api.Abstractions.Models.Transports.Devops.Wo
 
 namespace MantisDevopsBridge.Api.Adapters.Rest.Clients;
 
-public sealed class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOptionsMonitor<DevopsConfig> configMonitor, WorkItemAssembler workItemAssembler, AppAssembler appAssembler, SeverityAssembler severityAssembler, PriorityAssembler priorityAssembler, StatusAssembler statusAssembler, AppRegionAssembler regionAssembler) : TracingAdapter(logger),
-	IDevopsBoardClient
+public sealed class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOptionsMonitor<DevopsConfig> configMonitor, WorkItemAssembler workItemAssembler, AppAssembler appAssembler, SeverityAssembler severityAssembler, PriorityAssembler priorityAssembler, StatusAssembler statusAssembler, AppRegionAssembler regionAssembler) : TracingAdapter(logger), IDevopsBoardClient
 {
 	private DevopsConfig config => configMonitor.CurrentValue;
 	private EndpointElement endpoint => config.Endpoint;
-
 
 	private const string WorkItemType = "Bug Externe";
 
@@ -80,6 +81,16 @@ public sealed class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOption
 			AddField(WorkItemAssembler.HashField, workItem.Hash),
 		};
 
+		if (workItem.Users.Reporter.EndsWith("@coexya.eu"))
+		{
+			patchDocument.Add(AddField(WorkItemAssembler.ReportedFieldId, workItem.Users.Reporter));
+		}
+
+		if (workItem.Users.Developer is not null)
+		{
+			patchDocument.Add(AddField(WorkItemAssembler.DeveloperFieldId, workItem.Users.Developer));
+		}
+
 		// Create the work item
 		var result = await client.CreateWorkItemAsync(patchDocument, configMonitor.CurrentValue.Project, WorkItemType);
 
@@ -118,6 +129,17 @@ public sealed class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOption
 			UpdateField(WorkItemAssembler.UpdatedAtFieldId, workItem.MantisUpdatedAt),
 			UpdateField(WorkItemAssembler.HashField, workItem.Hash),
 		};
+
+		if (workItem.Users.Reporter.EndsWith("@coexya.eu"))
+		{
+			patchDocument.Add(UpdateField(WorkItemAssembler.ReportedFieldId, workItem.Users.Reporter));
+		}
+
+
+		if (workItem.Users.Developer is not null)
+		{
+			patchDocument.Add(AddField(WorkItemAssembler.DeveloperFieldId, workItem.Users.Developer));
+		}
 
 		patchDocument.AddRange(keys.Select(k => UpdateField(k, statusAssembler.ToAzure(workItem.Status))));
 

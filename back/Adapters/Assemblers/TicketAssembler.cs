@@ -24,6 +24,7 @@ internal sealed class TicketAssembler(PriorityAssembler priorityAssembler, Sever
 				CreatedAt = issue.CreatedAt,
 				UpdatedAt = issue.UpdatedAt
 			},
+
 			Severity = severityAssembler.Convert(issue),
 			Priority = priorityAssembler.Convert(issue),
 			Status = ParseStatus(issue.Status),
@@ -36,7 +37,12 @@ internal sealed class TicketAssembler(PriorityAssembler priorityAssembler, Sever
 					           Private = node.ViewState.Name == "private"
 				           })
 				           .ToList() ??
-			           new List<IssueMessage>()
+			           new List<IssueMessage>(),
+			Users = new IssueUsers
+			{
+				Reporter = issue.Reporter.Email,
+				Developer = issue.Handler?.Email
+			}
 		};
 	}
 

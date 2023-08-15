@@ -11,6 +11,10 @@ public sealed class WorkItemAssembler(AppAssembler appAssembler, PriorityAssembl
 	public const string SeverityFieldId = "Custom.3eb9946d-5bbf-4c69-97ee-7186896f0484";
 	public const string RegionFieldId = "Custom.972d0f37-c1aa-45d5-b4e2-e206b407f08a";
 	public const string PriorityFieldId = "Custom.5a605c5b-ace5-4fb4-a934-2960ddb2940a";
+
+	public const string DeveloperFieldId = "Custom.8ac1102b-d901-4ec5-ba01-d0407b2cccb5";
+	public const string ReportedFieldId = "Custom.Reporteur";
+
 	public const string TitleFieldId = "System.Title";
 	public const string AreaFieldId = "System.AreaPath";
 	public const string DescriptionFieldId = "System.Description";
@@ -44,11 +48,21 @@ public sealed class WorkItemAssembler(AppAssembler appAssembler, PriorityAssembl
 			MantisCreatedAt = ParseDate(fields[MantisCreatedAtField]),
 			CreatedAt = ParseDate(fields[CreatedAtFieldId]),
 			UpdatedAt = ParseDate(fields[UpdatedAtFieldId]),
-			Hash = (string) fields[HashField],
-			StepsToReproduce = (string) fields[StepsToReproduceFieldId]
+			Hash = (string)fields[HashField],
+			StepsToReproduce = (string)fields[StepsToReproduceFieldId],
+			Users = new IssueUsers
+			{
+				Reporter = GetEmailFromIdentityRef(fields[ReportedFieldId]),
+				Developer = GetEmailFromIdentityRef(fields[DeveloperFieldId])
+			}
 		};
 	}
 
+
+	private string GetEmailFromIdentityRef(object identityRef)
+	{
+		return ((Microsoft.VisualStudio.Services.WebApi.IdentityRef)identityRef).UniqueName;
+	}
 
 
 

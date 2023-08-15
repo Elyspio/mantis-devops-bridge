@@ -98,7 +98,8 @@ public sealed class IssueService(IMantisClient mantisClient, IDevopsBoardClient 
 			Summary = t.Summary,
 			MantisUpdatedAt = t.Dates.UpdatedAt ?? DateTime.Now,
 			MantisCreatedAt = t.Dates.CreatedAt,
-			Hash = t.Hash
+			Hash = t.Hash,
+			Users = t.Users,
 		});
 	}
 
@@ -116,7 +117,8 @@ public sealed class IssueService(IMantisClient mantisClient, IDevopsBoardClient 
 			Status = t.Status,
 			Summary = t.Summary,
 			MantisUpdatedAt = t.Dates.UpdatedAt ?? DateTime.Now,
-			Hash = t.Hash
+			Hash = t.Hash,
+			Users = t.Users,
 		});
 	}
 
