@@ -6,7 +6,7 @@ namespace MantisDevopsBridge.Api.Abstractions.Exceptions;
 /// <summary>
 ///     Defines a specialized exception type for HTTP errors.
 /// </summary>
-public  class HttpException : Exception
+public class HttpException : Exception
 {
 	/// <summary>
 	///     Initializes a new instance of the HttpException class with a specific HTTP status code, error message and a
@@ -40,7 +40,8 @@ public  class HttpException : Exception
 
 
 	/// <summary>
-	///     This represents a HTTP 404 (Not Found) exception specifically for entities or resources of type <typeparamref name="T" />.
+	///     This represents a HTTP 404 (Not Found) exception specifically for entities or resources of type
+	///     <typeparamref name="T" />.
 	///     It is used when the specified entity or resource cannot be found.
 	/// </summary>
 	/// <typeparam name="T">The type of the entity or resource which could not be found.</typeparam>

@@ -2,7 +2,7 @@
 
 namespace MantisDevopsBridge.Api.Abstractions.Models.Base.Issues;
 
-public  class Issue
+public class Issue
 {
 	public required int IdMantis { get; init; }
 	public required string Summary { get; init; }

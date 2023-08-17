@@ -42,7 +42,8 @@ public static class OpenTelemetryExtentions
 			}).WithMetrics(metricBuilder =>
 			{
 				metricBuilder
-					// .AddMeter(sources)
+					.AddMeter("*")
+					.AddMeter(sources)
 					.AddRuntimeInstrumentation()
 					.AddProcessInstrumentation()
 					.AddHttpClientInstrumentation()

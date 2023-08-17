@@ -1,8 +1,12 @@
-back/**/bin
-back/**/obj
+**/bin
+**/obj
+appsettings.secrets.json
+
 deploy
-.idea
-.git
+
 front/dist
 front/node_modules
-back/.vs
+
+**/.vs
+**/.idea
+.git

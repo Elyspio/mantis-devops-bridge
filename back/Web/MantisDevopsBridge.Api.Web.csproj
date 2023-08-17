@@ -32,9 +32,9 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Abstractions\MantisDevopsBridge.Api.Abstractions.csproj"/>
-        <ProjectReference Include="..\Adapters\MantisDevopsBridge.Api.Adapters.Rest.csproj"/>
+        <ProjectReference Include="..\Adapters\Rest\MantisDevopsBridge.Api.Adapters.Rest.csproj"/>
+        <ProjectReference Include="..\Adapters\Mongo\MantisDevopsBridge.Api.Adapters.Mongo.csproj"/>
         <ProjectReference Include="..\Core\MantisDevopsBridge.Api.Core.csproj"/>
-        <ProjectReference Include="..\Db\MantisDevopsBridge.Api.Adapters.Mongo.csproj"/>
     </ItemGroup>
 
 

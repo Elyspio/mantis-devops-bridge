@@ -28,8 +28,15 @@ public static class Log
 	/// </summary>
 	public static string F(object? value, [CallerArgumentExpression("value")] string name = "")
 	{
-		return $"{name}={JsonSerializer.Serialize(value, Options)}";
+		return $"{name}={Stringify(value)}";
 	}
+
+
+	public static string Stringify(object? value)
+	{
+		return JsonSerializer.Serialize(value, Options);
+	}
+
 
 	/// <summary>
 	///     Creates a new instance of the LoggerInstance class for method logging.
@@ -84,7 +91,7 @@ public static class Log
 			_autoExit = autoExit;
 			_method = method;
 			_logger = logger;
-			_traceId = activity?.RootId ?? activity?.Id;
+			_traceId = activity?.RootId ?? activity?.Id ?? "Startup";
 			_className = className;
 
 			if (!string.IsNullOrWhiteSpace(arguments)) _arguments = arguments;

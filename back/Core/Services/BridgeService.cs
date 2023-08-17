@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace MantisDevopsBridge.Api.Core.Services;
 
-public sealed class BridgeService(ILogger<BridgeService> logger, IIssueService issueService) : TracingService(logger), IHostedService, IDisposable, IAsyncDisposable
+public sealed class BridgeService(ILogger<BridgeService> logger, ISynchroService synchroService) : TracingService(logger), IHostedService, IDisposable, IAsyncDisposable
 {
 	private Timer? _timer;
 
@@ -38,7 +38,7 @@ public sealed class BridgeService(ILogger<BridgeService> logger, IIssueService i
 		using var _ = LogService();
 		try
 		{
-			issueService.Synchronize().GetAwaiter().GetResult();
+			synchroService.Synchronize().GetAwaiter().GetResult();
 		}
 		catch (Exception e)
 		{

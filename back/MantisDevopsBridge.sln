@@ -5,15 +5,15 @@ VisualStudioVersion = 17.1.32120.378
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MantisDevopsBridge.Api.Abstractions", "Abstractions\MantisDevopsBridge.Api.Abstractions.csproj", "{04D70810-6D52-4BCA-94E0-E5138C3923BE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MantisDevopsBridge.Api.Adapters.Rest", "Adapters\MantisDevopsBridge.Api.Adapters.Rest.csproj", "{FB92BB0B-2A3F-4A6D-8547-7993BF9DA5D2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MantisDevopsBridge.Api.Core", "Core\MantisDevopsBridge.Api.Core.csproj", "{388A04AE-1081-445B-8DDC-B837AA5D0F3D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MantisDevopsBridge.Api.Adapters.Mongo", "Db\MantisDevopsBridge.Api.Adapters.Mongo.csproj", "{658D04DC-7D4E-46E2-9F49-4000CFD77C79}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MantisDevopsBridge.Api.Web", "Web\MantisDevopsBridge.Api.Web.csproj", "{0FF2058F-F09A-41DE-A77C-EAB037F2742D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapters", "Adapters", "{3B1E2027-625B-44A2-ACA5-535E10E19F22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MantisDevopsBridge.Api.Adapters.Mongo", "Adapters\Mongo\MantisDevopsBridge.Api.Adapters.Mongo.csproj", "{A52F45EA-2D09-4185-9BE0-272DAA03161A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MantisDevopsBridge.Api.Adapters.Rest", "Adapters\Rest\MantisDevopsBridge.Api.Adapters.Rest.csproj", "{A00ECCDE-683C-4B8A-9B31-96F1F56CD2A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,22 +25,22 @@ Global
 		{04D70810-6D52-4BCA-94E0-E5138C3923BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04D70810-6D52-4BCA-94E0-E5138C3923BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04D70810-6D52-4BCA-94E0-E5138C3923BE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FB92BB0B-2A3F-4A6D-8547-7993BF9DA5D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FB92BB0B-2A3F-4A6D-8547-7993BF9DA5D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FB92BB0B-2A3F-4A6D-8547-7993BF9DA5D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FB92BB0B-2A3F-4A6D-8547-7993BF9DA5D2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{388A04AE-1081-445B-8DDC-B837AA5D0F3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{388A04AE-1081-445B-8DDC-B837AA5D0F3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{388A04AE-1081-445B-8DDC-B837AA5D0F3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{388A04AE-1081-445B-8DDC-B837AA5D0F3D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{658D04DC-7D4E-46E2-9F49-4000CFD77C79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{658D04DC-7D4E-46E2-9F49-4000CFD77C79}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{658D04DC-7D4E-46E2-9F49-4000CFD77C79}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{658D04DC-7D4E-46E2-9F49-4000CFD77C79}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0FF2058F-F09A-41DE-A77C-EAB037F2742D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0FF2058F-F09A-41DE-A77C-EAB037F2742D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FF2058F-F09A-41DE-A77C-EAB037F2742D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FF2058F-F09A-41DE-A77C-EAB037F2742D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A52F45EA-2D09-4185-9BE0-272DAA03161A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A52F45EA-2D09-4185-9BE0-272DAA03161A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A52F45EA-2D09-4185-9BE0-272DAA03161A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A52F45EA-2D09-4185-9BE0-272DAA03161A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A00ECCDE-683C-4B8A-9B31-96F1F56CD2A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A00ECCDE-683C-4B8A-9B31-96F1F56CD2A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A00ECCDE-683C-4B8A-9B31-96F1F56CD2A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A00ECCDE-683C-4B8A-9B31-96F1F56CD2A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -49,7 +49,7 @@ Global
 		SolutionGuid = {E1772C4C-73A6-4520-8FF8-35363674A984}
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{FB92BB0B-2A3F-4A6D-8547-7993BF9DA5D2} = {3B1E2027-625B-44A2-ACA5-535E10E19F22}
-		{658D04DC-7D4E-46E2-9F49-4000CFD77C79} = {3B1E2027-625B-44A2-ACA5-535E10E19F22}
+		{A52F45EA-2D09-4185-9BE0-272DAA03161A} = {3B1E2027-625B-44A2-ACA5-535E10E19F22}
+		{A00ECCDE-683C-4B8A-9B31-96F1F56CD2A1} = {3B1E2027-625B-44A2-ACA5-535E10E19F22}
 	EndGlobalSection
 EndGlobal

@@ -2,29 +2,31 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0-preview AS builder-back
 
 ARG MAIN_CSPROJ_PATH
 ARG ROOT_FOLDER
+ARG SLN_NAME
 
 ENV SRC /app
 
 RUN mkdir ${SRC}
 WORKDIR ${SRC}
 
+#region optimize dotnet restore
 
-# Copy only .csproj located in root directory to add cache to dotnet restore
-COPY ${ROOT_FOLDER}*/*.csproj ./${ROOT_FOLDER}
-WORKDIR ${ROOT_FOLDER}
+COPY ${ROOT_FOLDER}/*/*.csproj ${SRC}/${ROOT_FOLDER}/
+WORKDIR ${SRC}/${ROOT_FOLDER}/
+RUN find *.csproj | sed -r -e 's/.*\.(.+).csproj/\1/g' | xargs mkdir -p
+RUN find *.csproj | sed -r -e 's/(.*\.(.+).csproj)/.\/\1 .\/\2/g' | xargs -I % sh -c 'mv %'
+
+COPY ${ROOT_FOLDER}/Adapters/*/*.csproj ${SRC}/${ROOT_FOLDER}/Adapters/
+WORKDIR ${SRC}/${ROOT_FOLDER}/Adapters
 RUN find *.csproj | sed -r -e 's/.*\.(.+).csproj/\1/g' | xargs mkdir -p
 RUN find *.csproj | sed -r -e 's/(.*\.(.+).csproj)/.\/\1 .\/\2/g' | xargs -I % sh -c 'mv %'
 
 
+RUN dotnet restore ${SRC}/${ROOT_FOLDER}/${MAIN_CSPROJ_PATH}
 # endregion optimize dotnet restore
 
-COPY ${ROOT_FOLDER} ${SRC}/${ROOT_FOLDER}
-
-
-
-WORKDIR ${SRC}/${ROOT_FOLDER}
-RUN dotnet restore ${MAIN_CSPROJ_PATH}
-RUN dotnet publish ${MAIN_CSPROJ_PATH} --no-restore -o /app/out
+COPY ${ROOT_FOLDER}/ ${SRC}/${ROOT_FOLDER}/
+RUN dotnet publish ${SRC}/${ROOT_FOLDER}/${MAIN_CSPROJ_PATH} --no-restore -o /app/out
 
 
 # Building front

@@ -16,5 +16,7 @@ public sealed class ControllerDocumentationConvention : IControllerModelConventi
 				var routeAttribute = (RouteAttribute)attribute;
 				if (!string.IsNullOrWhiteSpace(routeAttribute.Name)) controller.ControllerName = routeAttribute.Name;
 			}
+
+		Console.WriteLine("");
 	}
 }

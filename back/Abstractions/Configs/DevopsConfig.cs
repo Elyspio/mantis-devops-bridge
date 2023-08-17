@@ -1,6 +1,4 @@
-﻿using MantisDevopsBridge.Api.Abstractions.Models.Base.Issues.Enums;
-
-namespace MantisDevopsBridge.Api.Abstractions.Configs;
+﻿namespace MantisDevopsBridge.Api.Abstractions.Configs;
 
 public sealed class DevopsConfig
 {

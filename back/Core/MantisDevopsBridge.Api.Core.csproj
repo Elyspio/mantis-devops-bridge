@@ -16,11 +16,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Abstractions\MantisDevopsBridge.Api.Abstractions.csproj"/>
-        <ProjectReference Include="..\Adapters\MantisDevopsBridge.Api.Adapters.Rest.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <Folder Include="Exceptions\"/>
-    </ItemGroup>
 
 </Project>

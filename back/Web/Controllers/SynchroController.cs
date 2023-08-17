@@ -1,20 +1,31 @@
 ﻿using MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing;
 using MantisDevopsBridge.Api.Abstractions.Interfaces.Services;
-using MantisDevopsBridge.Api.Abstractions.Models.Transports.Mantis.Tickets;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MantisDevopsBridge.Api.Web.Controllers;
 
 [Route("api/synchro")]
 [ApiController]
-public sealed class SynchroController(IIssueService issueService, ILogger<SynchroController> logger) : TracingController(logger)
+public sealed class SynchroController(ISynchroService synchroService, ITicketStateService ticketStateService, ILogger<SynchroController> logger) : TracingController(logger)
 {
-	[HttpPost]
+	/// <inheritdoc cref="ISynchroService.Synchronize" />
+	[HttpPost("tickets")]
 	[ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
 	public async Task<IActionResult> Synchronize()
 	{
 		using var _ = LogController();
-		await issueService.Synchronize();
+		await synchroService.Synchronize();
+		return NoContent();
+	}
+
+
+	/// <inheritdoc cref="ITicketStateService.Regenerate" />
+	[HttpPatch("states")]
+	[ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+	public async Task<IActionResult> RegenerateStates()
+	{
+		using var _ = LogController();
+		await ticketStateService.Regenerate();
 		return NoContent();
 	}
 }
