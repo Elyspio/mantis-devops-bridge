@@ -1,8 +1,10 @@
 ﻿using System.Text.Json.Serialization;
 using MantisDevopsBridge.Api.Abstractions.Common.Helpers.Json;
 using MantisDevopsBridge.Api.Web.Technical.Filters;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Identity.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -86,6 +88,17 @@ public static class ApiExtentions
 				);
 			}
 		);
+
+		return services;
+	}
+
+
+	public static IServiceCollection AddAppAuthentication(this IServiceCollection services, IConfiguration configuration)
+	{
+		services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+			.AddMicrosoftIdentityWebApi(configuration.GetSection("AzureAd"))
+			.EnableTokenAcquisitionToCallDownstreamApi()
+			.AddInMemoryTokenCaches();
 
 		return services;
 	}

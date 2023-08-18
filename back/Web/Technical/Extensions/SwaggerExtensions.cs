@@ -1,4 +1,5 @@
 ﻿using MantisDevopsBridge.Api.Web.Technical.Filters.Swagger;
+using Microsoft.OpenApi.Models;
 
 namespace MantisDevopsBridge.Api.Web.Technical.Extensions;
 
@@ -12,7 +13,7 @@ public static class SwaggerExtentions
 	/// </summary>
 	/// <param name="services"></param>
 	/// <returns></returns>
-	public static IServiceCollection AddAppSwagger(this IServiceCollection services)
+	public static IServiceCollection AddAppSwagger(this IServiceCollection services, IConfiguration configuration)
 	{
 		services.AddEndpointsApiExplorer();
 
@@ -29,7 +30,48 @@ public static class SwaggerExtentions
 			options.UseAllOfForInheritance();
 			options.CustomOperationIds(e => e.ActionDescriptor.RouteValues["action"]);
 
+
 			foreach (var xmlPath in xmlPaths) options.IncludeXmlComments(xmlPath);
+
+
+			var idTenant = configuration["AzureAd:TenantId"];
+			options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+			{
+				Type = SecuritySchemeType.OAuth2,
+				Flows = new OpenApiOAuthFlows
+				{
+					Implicit = new OpenApiOAuthFlow
+					{
+						AuthorizationUrl = new Uri($"https://login.microsoftonline.com/{idTenant}/oauth2/v2.0/authorize"),
+						TokenUrl = new Uri($"https://login.microsoftonline.com/{idTenant}/oauth2/v2.0/token"),
+						Scopes = new Dictionary<string, string>
+						{
+							{
+								"api://18622d82-eead-445d-9c2a-dffbc3e09078/MantisDevopsBridge",
+								"Reads user's information"
+							}
+						}
+					}
+				}
+			});
+
+			options.AddSecurityRequirement(new OpenApiSecurityRequirement
+			{
+				{
+					new OpenApiSecurityScheme
+					{
+						Reference = new OpenApiReference
+						{
+							Type = ReferenceType.SecurityScheme,
+							Id = "oauth2"
+						},
+						Scheme = "oauth2",
+						Name = "oauth2",
+						In = ParameterLocation.Header
+					},
+					new List<string>()
+				}
+			});
 		}).AddSwaggerGenNewtonsoftSupport();
 
 		return services;
@@ -46,12 +88,24 @@ public static class SwaggerExtentions
 		{
 			options.PreSerializeFilters.Add((document, request) =>
 			{
-				if (!request.Headers.Referer.FirstOrDefault()?.StartsWith("https://") == true) return;
-
-				foreach (var openApiServer in document.Servers) openApiServer.Url = openApiServer.Url.Replace("http://", "https://");
+				var uri = request.Headers.Referer.FirstOrDefault()!;
+				document.Servers = new List<OpenApiServer>
+				{
+					new()
+					{
+						Url = uri[..uri.IndexOf("swagger/", StringComparison.Ordinal)]
+					}
+				};
 			});
 		});
-		app.UseSwaggerUI();
+
+		var clientId = app.Configuration["AzureAd:ClientId"];
+		app.UseSwaggerUI(c =>
+		{
+			c.OAuthClientId(clientId);
+			c.OAuthClientSecret("n.J8Q~38F8QwalRvcTgnt4NFQGGVauI02eWuQb2s");
+			c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
+		});
 
 		return app;
 	}

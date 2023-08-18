@@ -33,7 +33,8 @@ public sealed class AppBuilder
 		builder.Services
 			.AddAppControllers()
 			.AddAppSignalR()
-			.AddAppSwagger();
+			.AddAppSwagger(builder.Configuration)
+			.AddAppAuthentication(builder.Configuration);
 
 
 		if (builder.Environment.IsDevelopment()) builder.Services.SetupDevelopmentCors();

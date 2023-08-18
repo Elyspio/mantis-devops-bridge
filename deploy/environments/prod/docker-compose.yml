@@ -11,9 +11,9 @@ services:
         labels:
             - "traefik.enable=true"
             - "traefik.docker.network=external"
-            - "traefik.http.middlewares.coexya-mantis-devops-bridge-prefix.stripprefix.prefixes=/coexya-mantis-devops-bridge"
+            - "traefik.http.middlewares.coexya-mantis-devops-bridge-prefix.stripprefix.prefixes=/coexya/mantis-devops-bridge"
             - "traefik.http.routers.coexya-mantis-devops-bridge.middlewares=coexya-mantis-devops-bridge-prefix@docker"
-            - "traefik.http.routers.coexya-mantis-devops-bridge.rule=PathPrefix(`/coexya-mantis-devops-bridge`)"
+            - "traefik.http.routers.coexya-mantis-devops-bridge.rule=PathPrefix(`/coexya/mantis-devops-bridge`)"
             - "traefik.http.services.coexya-mantis-devops-bridge.loadbalancer.server.port=4000"
             - "traefik.http.routers.coexya-mantis-devops-bridge.entrypoints=external"
 

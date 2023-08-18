@@ -46,6 +46,16 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0-preview AS production
 ARG ENTRY_DLL
 ENV ENTRY_DLL ${ENTRY_DLL}
 
+# Set the environment variable for the timezone
+ENV TZ=Europe/Paris
+
+# Update the package list and install any necessary packages
+RUN apt-get update && apt-get install -y tzdata
+
+# Link /etc/localtime to the appropriate timezone file
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+
 WORKDIR /back
 COPY --from=builder-back /app/out .
 

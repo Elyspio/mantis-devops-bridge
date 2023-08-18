@@ -19,9 +19,6 @@ public static class AppRuntime
 
 		app.UseAppSwagger();
 
-		// Setup authentication
-		app.UseAuthentication();
-		app.UseAuthorization();
 
 		app.UseOpenTelemetryPrometheusScrapingEndpoint();
 
@@ -32,6 +29,10 @@ public static class AppRuntime
 
 		// Start SPA serving
 		app.UseRouting();
+
+		// Setup authentication
+		app.UseAuthentication();
+		app.UseAuthorization();
 
 		app.UseStaticFiles();
 

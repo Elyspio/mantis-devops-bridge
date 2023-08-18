@@ -11,10 +11,10 @@ public sealed class Ticket : Issue
 
 	public required IssueDates Dates { get; init; }
 
-    /// <summary>
-    ///     Used to identify the state of a workItem
-    /// </summary>
-    public string Hash
+	/// <summary>
+	///     Used to identify the state of a workItem
+	/// </summary>
+	public string Hash
 	{
 		get
 		{

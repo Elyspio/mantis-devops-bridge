@@ -1,9 +1,13 @@
 ﻿using MantisDevopsBridge.Api.Abstractions.Common.Technical.Tracing;
 using MantisDevopsBridge.Api.Abstractions.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Web.Resource;
 
 namespace MantisDevopsBridge.Api.Web.Controllers;
 
+[Authorize]
+[RequiredScope("MantisDevopsBridge")]
 [Route("api/synchro")]
 [ApiController]
 public sealed class SynchroController(ISynchroService synchroService, ITicketStateService ticketStateService, ILogger<SynchroController> logger) : TracingController(logger)
