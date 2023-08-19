@@ -155,6 +155,16 @@ public static class Log
 		}
 
 		/// <summary>
+		///     Logs an error message.
+		/// </summary>
+		public void Error(Exception exception, string? content = null)
+		{
+			var sb = new StringBuilder($"{_traceId} {_className}.{_method}");
+			if (!string.IsNullOrWhiteSpace(content)) sb.Append($"  -- {content}");
+			_logger.LogError(exception, sb.ToString());
+		}
+
+		/// <summary>
 		///     Logs a warning message.
 		/// </summary>
 		public void Warn(string content)

@@ -6,7 +6,7 @@ namespace MantisDevopsBridge.Api.Abstractions.Interfaces.Clients;
 
 public interface IDevopsBoardClient
 {
-	Task<Dictionary<AppRegion, List<WorkItem>>> GetWorkItems();
+	Task<List<WorkItem>> GetWorkItems();
 	Task<WorkItem> CreateWorkItem(CreateWorkItemPayload workItem);
 	Task<WorkItem> UpdateWorkItem(UpdateWorkItemPayload workItem);
 	Task DeleteWorkItem(int id);

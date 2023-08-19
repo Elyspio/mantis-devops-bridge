@@ -24,15 +24,15 @@ internal class MantisClient(ILogger<MantisConfig> logger, IOptionsMonitor<Mantis
 
 		var tickets = new List<Ticket>();
 		var page = 1;
-		const int pageSize = 25;
+		const int pageSize = 50;
 
 		while (true)
 		{
 			var requestUri = $"{Endpoint.Host}/api/rest/issues?filter_id={config.CurrentValue.IdFilter}&page_size={pageSize}&page={page}";
 			var data = await Request<GetTokenResponse>(HttpMethod.Get, requestUri);
-			var ticketsAfterMinDate = data.Issues.Where(i => i.CreatedAt >= config.CurrentValue.MinIssuesDate).ToList();
-			tickets.AddRange(ticketsAfterMinDate.Select(ticketAssembler.Convert));
-			if (data.Issues.Count == 0 || ticketsAfterMinDate.Count != data.Issues.Count) break;
+			var ticketsAfterMinDate = data.Issues.Where(i => (i.UpdatedAt ?? i.CreatedAt) >= config.CurrentValue.MinIssuesDate).ToList();
+			tickets.AddRange(data.Issues.Select(ticketAssembler.Convert));
+			if (data.Issues.Count is 0 or < pageSize) break;
 			page++;
 		}
 

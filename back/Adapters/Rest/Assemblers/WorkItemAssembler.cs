@@ -35,27 +35,32 @@ public sealed class WorkItemAssembler(AppAssembler appAssembler, PriorityAssembl
 
 		return new WorkItem
 		{
-			Summary = (string)fields[TitleFieldId],
 			Id = item.Id!.Value,
-			Description = (string)fields[DescriptionFieldId],
+			Summary = (string)fields[TitleFieldId],
+			Description = TryGetField(fields, DescriptionFieldId, ""),
+			StepsToReproduce = TryGetField(fields, StepsToReproduceFieldId, ""),
 			App = appAssembler.Convert(item),
 			Severity = severityAssembler.Convert(item),
 			Priority = priorityAssembler.Convert(item),
 			Status = statusAssembler.Convert(item),
-			Comments = (string)fields[CommentairesFieldId],
+			Comments = TryGetField(fields, CommentairesFieldId, ""),
 			IdMantis = System.Convert.ToInt32(fields[MantisIdField]),
-			MantisUpdatedAt = ParseDate(fields[MantisUpdatedAtField]),
-			MantisCreatedAt = ParseDate(fields[MantisCreatedAtField]),
 			CreatedAt = ParseDate(fields[CreatedAtFieldId]),
 			UpdatedAt = ParseDate(fields[UpdatedAtFieldId]),
-			Hash = (string)fields[HashField],
-			StepsToReproduce = (string)fields[StepsToReproduceFieldId],
 			Users = new IssueUsers
 			{
 				Reporter = GetEmailFromIdentityRef(fields, ReportedFieldId)!,
 				Developer = GetEmailFromIdentityRef(fields, DeveloperFieldId)
 			}
 		};
+	}
+
+
+	private T TryGetField<T>(IDictionary<string, object>? fields, string field, T defaultValue)
+	{
+		var found = fields.TryGetValue(field, out var val);
+
+		return !found ? defaultValue : (T)val!;
 	}
 
 

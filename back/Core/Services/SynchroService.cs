@@ -11,6 +11,8 @@ using MantisDevopsBridge.Api.Abstractions.Models.Transports.Devops.Payloads;
 using MantisDevopsBridge.Api.Abstractions.Models.Transports.Devops.WorkItems;
 using MantisDevopsBridge.Api.Abstractions.Models.Transports.Mantis.Payloads;
 using MantisDevopsBridge.Api.Abstractions.Models.Transports.Mantis.Tickets;
+using MantisDevopsBridge.Api.Core.Exceptions;
+using MantisDevopsBridge.Api.Core.Exceptions.WorkItems;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -31,7 +33,7 @@ public sealed class SynchroService(IMantisClient mantisClient, IDevopsBoardClien
 
 		await Task.WhenAll(allMantis, boards, states);
 
-		var allWorkItems = boards.Result.SelectMany(i => i.Value).ToList();
+		var allWorkItems = boards.Result;
 
 
 		await UpdateBoard(states.Result, allMantis.Result, allWorkItems);
@@ -70,10 +72,24 @@ public sealed class SynchroService(IMantisClient mantisClient, IDevopsBoardClien
 			if (!stateFound || (ticketUpdatedAt > wt.UpdatedAt && ticketUpdatedAt > state!.WorkItemSynchronizedAt && ticketUpdatedAt != state.MantisSynchronizedAt)) workItemsToUpdate.Add((wt.Id, ticket, !stateFound));
 		}
 
-		if (workItemsToCreate.Count != 0) await workItemsToCreate.Parallelize((t, _) => CreateWorkItem(t));
+		if (workItemsToCreate.Count != 0)
+		{
+			var createResult = await workItemsToCreate.Parallelize((t, _) => CreateWorkItem(t));
+			if (createResult.Status == ParallelStatus.Faulted)
+			{
+				logger.Error($"Error while creating work items: {Log.Stringify(createResult.Exceptions)}");
+			}
+		}
 		else logger.Debug("No work item to create");
 
-		if (workItemsToUpdate.Count != 0) await workItemsToUpdate.Parallelize((pair, _) => UpdateWorkItem(pair.Id, pair.Ticket, pair.StateIsMissing));
+		if (workItemsToUpdate.Count != 0)
+		{
+			var updateResult = await workItemsToUpdate.Parallelize((pair, _) => UpdateWorkItem(pair.Id, pair.Ticket, pair.StateIsMissing));
+			if (updateResult.Status == ParallelStatus.Faulted)
+			{
+				logger.Error(new WorkItemUpdateException(updateResult.Exceptions.ToDictionary(pair => pair.Key.Ticket, pair => pair.Value)));
+			}
+		}
 		else logger.Debug("No work item to update");
 	}
 
@@ -105,9 +121,15 @@ public sealed class SynchroService(IMantisClient mantisClient, IDevopsBoardClien
 			return wt.UpdatedAt > mantis.Dates.UpdatedAtOrCreatedAt && wt.UpdatedAt > state!.MantisSynchronizedAt && wt.UpdatedAt != state.WorkItemSynchronizedAt;
 		}).ToArray();
 
-		if (workItemsToSynchro.Length != 0) await workItemsToSynchro.Parallelize((item, _) => UpdateTicket(item));
-		else
-			logger.Debug("No mantis ticket to update");
+		if (workItemsToSynchro.Length != 0)
+		{
+			var deleteResult = await workItemsToSynchro.Parallelize((item, _) => UpdateTicket(item));
+			if (deleteResult.Status == ParallelStatus.Faulted)
+			{
+				logger.Error(new WorkItemDeleteException(deleteResult.Exceptions));
+			}
+		}
+		else logger.Debug("No mantis ticket to update");
 	}
 
 
@@ -164,9 +186,6 @@ public sealed class SynchroService(IMantisClient mantisClient, IDevopsBoardClien
 			Severity = t.Severity,
 			Status = t.Status,
 			Summary = t.Summary,
-			MantisUpdatedAt = t.Dates.UpdatedAt ?? DateTime.Now,
-			MantisCreatedAt = t.Dates.CreatedAt,
-			Hash = t.Hash,
 			Users = t.Users
 		});
 

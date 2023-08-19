@@ -17,7 +17,8 @@ public class StatusAssembler : IMantisToAzureAssembler<TicketStatus>
 		{ TicketStatus.Resolved, "Résolu" },
 		{ TicketStatus.Delivered, "Livré Coexya" },
 		{ TicketStatus.DeliveredInPreProd, "Livré Préprod" },
-		{ TicketStatus.Closed, "Livré Fermé" }
+		{ TicketStatus.DeliveredProd, "Livré Prod" },
+		{ TicketStatus.Closed, "Fermé" }
 	};
 
 	private static readonly Dictionary<string, TicketStatus> _fromAzureMap = _toAzureMap.ToDictionary(pair => pair.Value, pair => pair.Key);

@@ -10,7 +10,7 @@ namespace MantisDevopsBridge.Api.Web.Controllers;
 [RequiredScope("MantisDevopsBridge")]
 [Route("api/synchro")]
 [ApiController]
-public sealed class SynchroController(ISynchroService synchroService, ITicketStateService ticketStateService, ILogger<SynchroController> logger) : TracingController(logger)
+public sealed class SynchroController(ISynchroService synchroService, ITicketStateService ticketStateService, IWorkItemService workItemService, ILogger<SynchroController> logger) : TracingController(logger)
 {
 	/// <inheritdoc cref="ISynchroService.Synchronize" />
 	[HttpPost("tickets")]
@@ -19,6 +19,16 @@ public sealed class SynchroController(ISynchroService synchroService, ITicketSta
 	{
 		using var _ = LogController();
 		await synchroService.Synchronize();
+		return NoContent();
+	}
+
+
+	[HttpDelete("work-items")]
+	[ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+	public async Task<IActionResult> DeleteWorkItems()
+	{
+		using var _ = LogController();
+		await workItemService.DeleteAllWorkItems();
 		return NoContent();
 	}
 

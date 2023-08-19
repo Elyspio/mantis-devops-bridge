@@ -26,7 +26,7 @@ public sealed class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOption
 	private DevopsConfig config => configMonitor.CurrentValue;
 	private EndpointElement endpoint => config.Endpoint;
 
-	public async Task<Dictionary<AppRegion, List<WorkItem>>> GetWorkItems()
+	public async Task<List<WorkItem>> GetWorkItems()
 	{
 		using var _ = LogAdapter();
 
@@ -45,7 +45,7 @@ public sealed class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOption
 
 		await Parallel.ForEachAsync(workItemIds, async (id, token) => workItems.Add(await wtClient.GetWorkItemAsync(id, cancellationToken: token)));
 
-		return workItems.Select(workItemAssembler.Convert).GroupBy(i => i.App.Region).ToDictionary(pair => pair.Key, pair => pair.ToList());
+		return workItems.Select(workItemAssembler.Convert).ToList();
 	}
 
 	public async Task<WorkItem> CreateWorkItem(CreateWorkItemPayload workItem)
@@ -59,16 +59,13 @@ public sealed class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOption
 			AddField(WorkItemAssembler.AreaFieldId, configMonitor.CurrentValue.Area),
 			AddField(WorkItemAssembler.TitleFieldId, workItem.Summary),
 			AddField(WorkItemAssembler.DescriptionFieldId, workItem.Description),
-			AddField(WorkItemAssembler.StepsToReproduceFieldId, workItem.StepsToReproduce),
+			AddField(WorkItemAssembler.StepsToReproduceFieldId, workItem.StepsToReproduce ?? ""),
 			AddField(WorkItemAssembler.CommentairesFieldId, workItem.Comments),
 			AddField(WorkItemAssembler.TagsFieldId, appAssembler.ComputeTags(workItem.App)),
 			AddField(WorkItemAssembler.SeverityFieldId, severityAssembler.ToAzure(workItem.Severity)),
 			AddField(WorkItemAssembler.PriorityFieldId, priorityAssembler.ToAzure(workItem.Priority)),
 			AddField(WorkItemAssembler.RegionFieldId, regionAssembler.ToAzure(workItem.App.Region)),
 			AddField(WorkItemAssembler.MantisIdField, workItem.IdMantis),
-			AddField(WorkItemAssembler.MantisCreatedAtField, workItem.MantisCreatedAt),
-			AddField(WorkItemAssembler.MantisUpdatedAtField, workItem.MantisUpdatedAt),
-			AddField(WorkItemAssembler.HashField, workItem.Hash)
 		};
 
 		if (workItem.Users.Reporter.EndsWith("@coexya.eu")) patchDocument.Add(AddField(WorkItemAssembler.ReportedFieldId, workItem.Users.Reporter));
@@ -86,7 +83,6 @@ public sealed class DevopsBoardClient(ILogger<DevopsBoardClient> logger, IOption
 		};
 
 		patchDocument.AddRange(keys.Select(k => UpdateField(k, statusAssembler.ToAzure(workItem.Status))));
-
 
 		await Task.Delay(100);
 

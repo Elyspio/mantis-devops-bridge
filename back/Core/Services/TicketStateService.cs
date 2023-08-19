@@ -22,7 +22,7 @@ public class TicketStateService(ILogger<TicketStateService> logger, ITicketState
 
 
 		var tickets = mantisTask.Result;
-		var workItems = boardsTask.Result.SelectMany(i => i.Value).ToList();
+		var workItems = boardsTask.Result;
 		var states = statesTask.Result;
 
 

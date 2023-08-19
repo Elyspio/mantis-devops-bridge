@@ -76,7 +76,7 @@ public static class ListExtension
 		return new ParallelResult<TInput>
 		{
 			Exceptions = innerExceptions.ToDictionary(pair => pair.Key, pair => pair.Value),
-			Status = innerExceptions.Any() ? ParallelStatus.Faulted : ParallelStatus.Succeed
+			Status = !innerExceptions.IsEmpty ? ParallelStatus.Faulted : ParallelStatus.Succeed
 		};
 	}
 

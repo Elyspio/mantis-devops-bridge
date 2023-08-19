@@ -1,4 +1,5 @@
-﻿using MantisDevopsBridge.Api.Abstractions.Models.Base.Issues.Enums;
+﻿using MantisDevopsBridge.Api.Abstractions.Common.Helpers;
+using MantisDevopsBridge.Api.Abstractions.Models.Base.Issues.Enums;
 
 namespace MantisDevopsBridge.Api.Abstractions.Models.Base.Issues;
 
@@ -8,9 +9,8 @@ public sealed class App
 	public required List<AppPlatform> Platforms { get; init; }
 	public required string Environment { get; init; }
 
-
-	public new int GetHashCode()
+	public override string ToString()
 	{
-		return HashCode.Combine((int)Region, Platforms, Environment);
+		return $"{nameof(Region)}: {Region}, {nameof(Platforms)}: {Log.Stringify(Platforms)}, {nameof(Environment)}: {Environment}";
 	}
 }
